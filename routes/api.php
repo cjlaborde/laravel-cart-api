@@ -1,6 +1,10 @@
 <?php
+# http://cart-api.test/api
+use App\Models\Category;
 
-# http://cart-api.test/api // hello
 Route::get('/', function () {
-    return 'hello';
+    // only grab the parent
+    // order by order database field
+    $categories = Category::parents()->ordered()->get();
+    dd($categories);
 });
