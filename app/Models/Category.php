@@ -11,8 +11,8 @@ class Category extends Model
 {
     // Reused Traits to be reused by multiple models
     use HasChildren;
-    use HasFactory;
     use IsOrderable;
+    use HasFactory;
 
     protected $fillable = [
         'name',

@@ -1,12 +1,12 @@
 <?php
 namespace App\Models\Traits;
 
-use App\Models\Category;
+use Illuminate\Database\Eloquent\Builder;
 
 trait IsOrderable
 {
-    public function children()
+    public function scopeOrdered(Builder $builder, $direction = 'asc')
     {
-        return $this->hasMany(Category::class, 'parent_id', 'id');
+        $builder->orderBy('order', $direction);
     }
 }

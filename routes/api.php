@@ -1,10 +1,5 @@
 <?php
-# http://cart-api.test/api
-use App\Models\Category;
 
-Route::get('/', function () {
-    // only grab the parent
-    // order by order database field
-    $categories = Category::parents()->ordered()->get();
-    dd($categories);
-});
+use App\Http\Controllers\Categories\CategoryController;
+
+Route::resource('categories', CategoryController::class);

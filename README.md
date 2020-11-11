@@ -41,4 +41,24 @@ Laravel ships with the later, but Tests\TestCase class take care of setting up t
 otherwise models wont be able to communicate with the database if they are extending PHPunit\Framework\TestCase.
 ```
 9. https://github.com/laravel/framework/issues/34209
+10. Create traits to reuse code in Categories for other Models
+
+### Category index endpoint
+1. php artisan make:controller Categories\\CategoryController 
+2. create route in api.php
+3. Route::resource('categories', 'Categories\CategoryController');
+4. Go to Postman and check the api 
+6. http://cart-api.test/api/categories
+7. https://dev.to/seankerwin/laravel-8-rest-api-with-resource-controllers-5bok
+8. In APi you only need to create 1 route and laravel 8 will handle the rest
+9. Route::resource('categories', CategoryController::class);
+10. create index() in CategoryController and check the route in Postman
+11. Now we going to use Category Resources.
+12. php artisan make:resource CategoryResource   
+
+#### Test Category index endpoint
+1. php artisan make:test Categories\\CategoryIndexTest
+2. phpunit tests/Feature/Categories/
+3. 
+
 
