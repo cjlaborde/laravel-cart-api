@@ -71,3 +71,21 @@ otherwise models wont be able to communicate with the database if they are exten
 3. php artisan make:migration add_description_to_products_table --table=products
 4. php artisan make:test Product\\ProductIndexTest 
 5. php artisan make:factory ProductFactory
+6. ProductResource is a standard resource that extends ProductIndexResource
+7. php artisan make:resource ProductResource
+8. extend class ProductResource extends ProductIndexResource instead of JsonResource
+9. Then merge with array_merge  array_merge(parent::toArray($request)
+10.  php artisan make:test ProductShowTest 
+11. Product = things we Testing | Show = Action we are testing | Test
+12. Now we can show list of products and show a product
+
+
+
+
+
+
+
+
+
+
+
