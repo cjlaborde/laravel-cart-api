@@ -64,3 +64,10 @@ otherwise models wont be able to communicate with the database if they are exten
 1. php artisan make:model Product -m
 2. php artisan make:test Product\\ProductTest --unit
 
+
+### Product Index endpoint
+1. php artisan make:controller Products\\ProductController
+2. php artisan make:resource ProductIndexResource
+3. php artisan make:migration add_description_to_products_table --table=products
+4. php artisan make:test Product\\ProductIndexTest 
+5. php artisan make:factory ProductFactory
