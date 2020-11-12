@@ -59,6 +59,8 @@ otherwise models wont be able to communicate with the database if they are exten
 #### Test Category index endpoint
 1. php artisan make:test Categories\\CategoryIndexTest
 2. phpunit tests/Feature/Categories/
-3. 
 
+### Simple Products
+1. php artisan make:model Product -m
+2. php artisan make:test Product\\ProductTest --unit
 
