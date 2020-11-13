@@ -3,6 +3,7 @@
 namespace Tests\Unit\Models\Categories;
 
 use App\Models\Category;
+use App\Models\Product;
 use Tests\TestCase;
 
 
@@ -47,4 +48,17 @@ class CategoryTest extends TestCase
         // assert that first category we get back is a collection
         $this->assertEquals($anotherCategory->name, Category::ordered()->first()->name);
     }
+
+    public function  test_it_has_many_products()
+    {
+        $category = Category::factory(Category::class)->create();
+
+        $category->products()->save(
+            Product::factory()->create()
+        );
+
+        $this->assertInstanceOf(Product::class, $category->products->first());
+    }
 }
+
+

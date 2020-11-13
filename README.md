@@ -79,8 +79,10 @@ otherwise models wont be able to communicate with the database if they are exten
 11. Product = things we Testing | Show = Action we are testing | Test
 12. Now we can show list of products and show a product
 
-
-
+### Hooking up producta to categories
+1. php artisan make:migration create_category_product_table --create=category_product
+2. creates belong to many relationship
+3. 
 
 
 
