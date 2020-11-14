@@ -9,7 +9,7 @@
 5.  Now when we run tests we will use cart_testing database
 6. code ~/.zshrc
 7. `alias phpunit="./vendor/bin/phpunit"`
-8. test/TestCase.php
+8. `use test/TestCase.php` instead of `PHPUnit\Framework\TestCase`
 9. For each test that we have
 10 . Tests\Feature;
 11. We have `use Illuminate\Foundation\Testing\RefreshDatabase;`
@@ -82,12 +82,10 @@ otherwise models wont be able to communicate with the database if they are exten
 ### Hooking up producta to categories
 1. php artisan make:migration create_category_product_table --create=category_product
 2. creates belong to many relationship
-3. 
 
+### Scoping(filtering) products by category
+1.  http://cart-api.test/api/products?category=coffee
 
-
-
-
-
-
+#### Testing Scoping(filtering) products by category
+1. php artisan make:test Products\\ProductScopingTest
 
