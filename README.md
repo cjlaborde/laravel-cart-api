@@ -89,3 +89,21 @@ otherwise models wont be able to communicate with the database if they are exten
 #### Testing Scoping(filtering) products by category
 1. php artisan make:test Products\\ProductScopingTest
 
+### Simple CORS support
+> Reason we use CORS is that our API and front end can be in different domains
+> so we need to tell the api that request from the 
+> front end using a certain domain we specify is allowed
+
+1. https://github.com/fruitcake/laravel-cors
+2. composer require fruitcake/laravel-cors
+3. in app/Http/Kernel.php
+```
+protected $middleware = [
+  \Fruitcake\Cors\HandleCors::class,
+    // ...
+];
+```
+4. php artisan vendor:publish --tag="cors"
+5. Now we can add our origins in config/cors.php
+6. 'allowed_origins' => ['*'], means anything can access it
+7. 'allowed_origins' => ['yoursite.com'], only your site can access it.
