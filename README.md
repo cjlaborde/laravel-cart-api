@@ -9,7 +9,7 @@
 5.  Now when we run tests we will use cart_testing database
 6. code ~/.zshrc
 7. `alias phpunit="./vendor/bin/phpunit"`
-8. `use test/TestCase.php` instead of `PHPUnit\Framework\TestCase`
+8. `use Tests\TestCase;` instead of `PHPUnit\Framework\TestCase`
 9. For each test that we have
 10 . Tests\Feature;
 11. We have `use Illuminate\Foundation\Testing\RefreshDatabase;`
@@ -126,8 +126,21 @@ nike air max
 4. php artisan make:resource ProductVariationResource
 5. php artisan make:factory ProductVariationFactory  
 
-
-
-
-
-
+### Product variation types
+1. php artisan make:model ProductVariationType -m
+2. php artisan make:migration add_product_variation_type_id_to_product_variations_table --table=product_variations
+3. Adding Product variation
+```
+  When we use product variation result we saying this->id but that doesn't work since we are trying
+  to look for a key on a collection, is not expecting something to be grouped by something else
+  What we can do is check, $this->resource and check if it an instance of Collection
+  We want to return ProductVariationResource, but we want to return collection for each.
+  What is happening here is that if we are grouping items each of them groups will be an individual collection
+  with items inside of themselves
+ 
+  What Resource trying to do without this if statement is trying to access $this->id which will not work
+  What the if statement does is goes into each of the keys keys that we group by and then go ahead and
+  return a collection of products variation
+```
+4. php artisan make:test Product\\ProductVariationTest --unit
+5. php artisan make:factory ProductVariationTypeFactory
