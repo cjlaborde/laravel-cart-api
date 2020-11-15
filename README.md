@@ -107,3 +107,27 @@ protected $middleware = [
 5. Now we can add our origins in config/cors.php
 6. 'allowed_origins' => ['*'], means anything can access it
 7. 'allowed_origins' => ['yoursite.com'], only your site can access it.
+8. Remember to add 'paths' => ['api/*'], to allow cors path
+
+### Product variations
+1. example with shoes
+```
+nike air max
+    colors
+        blue
+        black
+        white
+    sizes
+        uk 9
+        uk 10
+```
+2. when he add product to cart what we actually adding is product variation
+3. php artisan make:model ProductVariation -m
+4. php artisan make:resource ProductVariationResource
+5. php artisan make:factory ProductVariationFactory  
+
+
+
+
+
+
