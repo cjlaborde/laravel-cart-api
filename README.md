@@ -165,3 +165,17 @@ nike air max
 ### Qucik scoper trair refactor
 1. move Model Product.php methods to a trait
 2. So you can reuse it for other Models
+
+### Product Prices
+1. https://github.com/moneyphp/money
+2. composer require moneyphp/money
+3. On front end when it says get new cart total
+4. We not going to do any calculation on the client side
+5. We going to do all the adding up different prices, adding on shipping
+6. All that kind of stuff in API itself
+7. All we need to output in the API is the formatted price
+8. public function formattedPrice() will not work
+9. So you need to add public function getFormattedPriceAttribute() so we pull out dynamically
+10. in HasPrice trait
+11. When we try to Access Price attribute
+12. It will automatically give us Custom Money class

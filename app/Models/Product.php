@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasPrice\HasPrice;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Traits\CanBeScoped;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory;
-    use CanBeScoped;
+    use HasFactory, CanBeScoped, HasPrice;
 
     // When we look these up inside of our routes.
     // We will use the slug to return this.
