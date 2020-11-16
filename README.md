@@ -161,3 +161,7 @@ nike air max
 12. Base on what is on the query string
 13. Then add the protected function foreach ($this->limitScopes($scopes) as $key => $scope) {
 14. Now we limiting the scopes and not running the apply filtering if we don't need to on the test.
+
+### Qucik scoper trair refactor
+1. move Model Product.php methods to a trait
+2. So you can reuse it for other Models
