@@ -17,8 +17,9 @@ class Scoper
 
     public function apply(Builder $builder, array $scopes)
     {
+        // Goes through each of the scope and apply the scope here with what is in the request
         // key is what we looking for in the request
-       foreach ($scopes as $key => $scope) {
+       foreach ($this->limitScopes($scopes) as $key => $scope) {
            // if the scope doesn't match with the interface ignore it
            if (!$scope instanceof Scope) {
                continue;
@@ -30,5 +31,17 @@ class Scoper
        }
 
        return $builder;
+    }
+
+    // return a limited collection of scopes
+    // Base on what is on the query string
+    protected function limitScopes(array $scopes)
+    {
+        // only pluck out the items keys from what we requested
+        // should only give us back only items in scopes // 'category' => class
+        return array_only(
+            $scopes,
+            array_keys($this->request->all())
+        );
     }
 }

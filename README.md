@@ -144,3 +144,20 @@ nike air max
 ```
 4. php artisan make:test Product\\ProductVariationTest --unit
 5. php artisan make:factory ProductVariationTypeFactory
+
+### Fixing failing tests for the product index
+1. Verify Tests\Feature\Product\ProductIndexTest::test_it_shows_a_collection_of_products
+2. Notice nothing is wrong with test.
+3. So we go to postman and check http://cart-api.test/api/products
+3. and we see data [] empty even through we do have products
+4. reason for this is the Scoper
+5. Go to CategoryScope and do a dd('abc')
+6. Then send in postman and we see the output 'abc'
+7. But our CategoryScope should not be called and run and filter when we calling http://cart-api.test/api/products
+8. since the $value going to be null and cause error in test
+9. We going to fix issue inside Scope.php we want to skip filtering by things that don't exist within the query string
+10. Create function in Scoper.php called limitScopes
+11. return a limited collection of scopes
+12. Base on what is on the query string
+13. Then add the protected function foreach ($this->limitScopes($scopes) as $key => $scope) {
+14. Now we limiting the scopes and not running the apply filtering if we don't need to on the test.
