@@ -179,3 +179,38 @@ nike air max
 10. in HasPrice trait
 11. When we try to Access Price attribute
 12. It will automatically give us Custom Money class
+
+### Product variation prices
+1. Product variation can have different price
+2. Key here is that if the product variation doesn't have a price
+3. It needs to inherits it from the base point product the default price in products table
+4. if price doesn't exist from variation we need to inherit it from the parent product
+5. We need to overwrite price attribute from HasPrice.php
+```php
+    public function getPriceAttribute($value)
+    {
+        // original value we have in database
+        // When we try to Access Price attribute
+        // It will automatically give us Custom Money class
+        return new Money($value);
+    }
+```
+6. We overwrite since we want to target to specifit product related
+```php
+    public function getPriceAttribute($value)
+    {
+        if ($value === null) {
+            // will return Money instance since you are using Attribute
+            return $this->product->price;
+        }
+        return new Money($value);
+    }
+```
+#### Check if price varies for product variation
+1. when price varies is true it means the price is different from default cost.
+2. So we add new price_varies attribute to the product data result
+3. http://cart-api.test/api/products/coffee
+
+#### Testing Product variation prices
+1. If product variation doesn't have a price it inherits price from the parent
+2. Check if price varies

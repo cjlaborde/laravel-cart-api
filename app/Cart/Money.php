@@ -18,6 +18,12 @@ class Money
        $this->money = new BaseMoney($value, new Currency('USD'));
     }
 
+    public function amount()
+    {
+        // returns the price in integer form instead of Money collection
+        return $this->money->getAmount();
+    }
+
     public function formatted()
     {
         $formatter = new IntlMoneyFormatter(
