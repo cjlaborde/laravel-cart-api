@@ -212,5 +212,13 @@ nike air max
 3. http://cart-api.test/api/products/coffee
 
 #### Testing Product variation prices
-1. If product variation doesn't have a price it inherits price from the parent
+1. If product variation doesn't have a price
+ it inherits price from the parent
 2. Check if price varies
+
+### Product stock blocks
+1. We are not attaching stock to products, we are to products_variations
+2. We will build a stock ordering table will check which product have been ordered
+3. Will give you dynamic value for the stock that you have
+4. php artisan make:model Stock -m
+5. php artisan make:factory StockFactory
