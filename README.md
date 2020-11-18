@@ -222,3 +222,13 @@ nike air max
 3. Will give you dynamic value for the stock that you have
 4. php artisan make:model Stock -m
 5. php artisan make:factory StockFactory
+
+### Basics orders to test stocks
+1. Order table will be able to create orders for particular user link this in to proper variation in order.
+2. From that we can deduce how much stock we actually have based on the quantities that have been ordered
+3. php artisan make:model Order -m
+4. Create pivot table that tells us how much been ordered
+5. php artisan make:migration create_product_variation_order_table --create=product_variation_order
+6. How orders work
+7. We take cart content of the user cart place them into product_variation_order
+8. Then create order when it been successful
