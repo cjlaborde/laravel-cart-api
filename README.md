@@ -162,7 +162,7 @@ nike air max
 13. Then add the protected function foreach ($this->limitScopes($scopes) as $key => $scope) {
 14. Now we limiting the scopes and not running the apply filtering if we don't need to on the test.
 
-### Qucik scoper trair refactor
+### Qucik scoper trait refactor
 1. move Model Product.php methods to a trait
 2. So you can reuse it for other Models
 
@@ -232,3 +232,192 @@ nike air max
 6. How orders work
 7. We take cart content of the user cart place them into product_variation_order
 8. Then create order when it been successful
+
+### Product variation stock checks (Views Dynamic Database table)
+1. Use ""SQL Query"" to create a view
+```sql
+create view products_view as
+	select * from products
+```
+2. cart/Views/products_view in database
+3. when we create a new product in product table, the products_view will give us the updated version.
+4. delete products_view since this was an example
+5. The view we going to create will be a list of all the products variations and what the current stock is
+6. with the sum of the stocks(table) subtracted from the order quantity(product_variation_order) that have been made
+7. As well boolean flag to check if this is out of stock or in stock.
+8. Just so we have it in the table, we don't need to represent this in code
+9. We want to drop VIEW if exist since we want to gradually 
+10. We are selecting all the products_variations
+```sql
+drop view if exists product_variation_stock_view;
+
+create view product_variation_stock_view as
+	select product_variations.product_id as product_id
+	from product_variations
+```
+11. We get all the products id from the product_variations table
+```sql
+drop view if exists product_variation_stock_view;
+create view product_variation_stock_view as
+	select 
+		product_variations.product_id as product_id,
+		product_variations.id as product_variation_id
+	from product_variations
+```
+12. Now we will use join
+13. Will use (id) as the primary
+```sql
+drop view if exists product_variation_stock_view;
+create view product_variation_stock_view as
+	select 
+		product_variations.product_id as product_id,
+		product_variations.id as product_variation_id
+	from product_variations
+	left join (
+		select stocks.product_variation_id as id
+		from stocks
+		group by stocks.product_variation_id 
+	) as stocks using (id)
+```
+14. sum(stocks.quantity) as stock will give us the total for this particular variation
+15. then group it by the variation id
+```sql
+DROP VIEW IF EXISTS product_variation_stock_view;
+CREATE VIEW product_variation_stock_view AS
+	SELECT 
+		product_variations.product_id AS product_id,
+		product_variations.id AS product_variation_id,
+		SUM(stocks.quantity) AS stock
+	FROM product_variations
+	LEFT JOIN (
+		SELECT stocks.product_variation_id AS id,
+		SUM(stocks.quantity) AS quantity
+		FROM stocks
+		GROUP BY stocks.product_variation_id 
+	) AS stocks USING (id)
+	group by product_variations.id
+```
+16. Now we can test it by adding another 100 in stock table
+17. Now we give refresh to product_variation_stock_view and see 200
+18. if stock none existing or we don't have any stock
+19. We want this to represent 0
+20. For example create another stocks table item and have 0 quantity
+21. We will see is 0 in product_variation_stock_view
+22. But if we don't add stock 0 we going to see null value
+23. To resolve this we going to use COALESCE to return 0 as default
+```sql
+		coalesce(SUM(stocks.quantity), 0) AS stock
+```
+24. Now we join the product_variations_order table since it has the quantity we can substract from total amount of stock
+25. We will use JOIN for this
+```sql
+	left join (
+		 select
+		 	product_variation_order.product_variation_id as id,
+		 	SUM(product_variation_order.quantity) as quantity
+		 from product_variation_order
+		 group by product_variation_order.product_variation_id
+	) as product_variation_order using (id)
+	group by product_variations.id
+```
+26. Substract the total when another user makes a purchase
+```sql
+    coalesce(SUM(stocks.quantity) - SUM(product_variation_order.quantity), 0) AS stock
+```
+27. Now we can test it by adding more stock in stocks table
+28. Then again by adding in product_variation_order so that it substract from the total stock in product_variation_stock_view
+29. Now we going to add default 0 if (product_variation_order doesn't exist
+```sql
+	coalesce(SUM(stocks.quantity) - coalesce(SUM(product_variation_order.quantity), 0), 0) AS stock
+```
+30. Now try doing same by adding a new stock item
+
+#### Now add boolean with true or false if item on stock or not
+1. We will do it in SQL editor by using case value and check if greater than > 0 then we represent it as true value
+2. else represent a false value
+3. Now we can see the in_stock column in product_variation_stock_view
+```sql
+		coalesce(SUM(stocks.quantity) - coalesce(SUM(product_variation_order.quantity), 0), 0) AS stock,
+		case when COALESCE(SUM(stocks.quantity) - coalesce (sum(product_variation_order.quantity), 0), 0) > 0
+			then true
+			else false
+		end in_stock
+```
+4. Now we test it by making an order in product_variation_order for 50 which will turn in_stock to false
+5. What we can do now is create a migration for this
+
+#### Now we will convert the product_variation_stock_view into a migration
+1. We will convert this view into a migration.
+```sql
+DROP VIEW IF EXISTS product_variation_stock_view;
+CREATE VIEW product_variation_stock_view AS
+	SELECT 
+		product_variations.product_id AS product_id,
+		product_variations.id AS product_variation_id,
+		coalesce(SUM(stocks.quantity) - coalesce(SUM(product_variation_order.quantity), 0), 0) AS stock,
+		case when COALESCE(SUM(stocks.quantity) - coalesce (sum(product_variation_order.quantity), 0), 0) > 0
+			then true
+			else false
+		end in_stock
+	FROM product_variations
+	LEFT JOIN (
+		SELECT stocks.product_variation_id AS id,
+		SUM(stocks.quantity) AS quantity
+		FROM stocks
+		GROUP BY stocks.product_variation_id 
+	) AS stocks USING (id)
+	left join (
+		 select
+		 	product_variation_order.product_variation_id as id,
+		 	SUM(product_variation_order.quantity) as quantity
+		 from product_variation_order
+		 group by product_variation_order.product_variation_id
+	) as product_variation_order using (id)
+	group by product_variations.id
+```
+2. `php artisan make:migration product_variation_stock_view`
+3. We will add it using DB::statement()
+```php
+        DB::statement("
+            CREATE VIEW product_variation_stock_view AS
+            SELECT
+                product_variations.product_id AS product_id,
+                product_variations.id AS product_variation_id,
+                coalesce(SUM(stocks.quantity) - coalesce(SUM(product_variation_order.quantity), 0), 0) AS stock,
+                case when COALESCE(SUM(stocks.quantity) - coalesce (sum(product_variation_order.quantity), 0), 0) > 0
+                    then true
+                    else false
+                end in_stock
+            FROM product_variations
+            LEFT JOIN (
+                SELECT stocks.product_variation_id AS id,
+                SUM(stocks.quantity) AS quantity
+                FROM stocks
+                GROUP BY stocks.product_variation_id
+            ) AS stocks USING (id)
+            left join (
+                 select
+                    product_variation_order.product_variation_id as id,
+                    SUM(product_variation_order.quantity) as quantity
+                 from product_variation_order
+                 group by product_variation_order.product_variation_id
+            ) as product_variation_order using (id)
+            group by product_variations.id
+        ");
+```
+4. Now we create the down() to drop the table
+```php
+    public function down()
+    {
+        DB::statement("DROP VIEW IF EXIST product_variation_stock_view");
+    }
+```
+5. Now we delete the product_variation_stock_view since it should not be there
+6. php artisan migrate
+7. Now where ever our project go we have up to date dynamic stock information that tell us if particular product is in stock
+
+
+
+
+
+
