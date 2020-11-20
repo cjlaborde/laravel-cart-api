@@ -416,7 +416,11 @@ CREATE VIEW product_variation_stock_view AS
 6. php artisan migrate
 7. Now where ever our project go we have up to date dynamic stock information that tell us if particular product is in stock
 
-
+### Product variations is out of stock
+1. Create stock() method in ProductVariation
+2. what we want to get back from this relationship is a product variation instance
+3. we not interested in the product variation what we are interested is the pivot information the stock
+4. Reason we use belongsToMany is that we can access that pivot information
 
 
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Traits\HasPrice;
+namespace App\Models\Traits;
 
 use App\Cart\Money;
 use Money\Currencies\ISOCurrencies;
@@ -18,8 +18,8 @@ trait HasPrice
         return new Money($value);
     }
 
-//    public function formattedPrice()
     public function getFormattedPriceAttribute()
+//    public function formattedPrice()
     {
         return $this->price->formatted();
     }

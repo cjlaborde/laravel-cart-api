@@ -3,10 +3,9 @@
 namespace App\Models;
 
 use App\Cart\Money;
-use App\Models\Traits\HasPrice\HasPrice;
+use App\Models\Traits\HasPrice;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ProductVariationType;
 
 class ProductVariation extends Model
 {
@@ -30,7 +29,17 @@ class ProductVariation extends Model
         return $this->price->amount() != $this->product->price->amount();
     }
 
+    public function inStock()
+    {
+        return $this->stockCount() > 0;
+    }
 
+    public function stockCount()
+    {
+        return $this->stock->sum('pivot.stock');
+    }
+
+    # Keep relationship methods in bottom and keep everything else at the top
     public function type()
     {
         // foreign key id and local key product_variation_type_id
@@ -45,5 +54,19 @@ class ProductVariation extends Model
     public function stocks()
     {
         return $this->hasMany(Stock::class);
+    }
+
+    public function stock()
+    {
+        // what we want to get back from this relationship is a product variation instance
+        // we not interested in the product variation what we are interested is the pivot information the stock
+        // Reason we use belongsToMany is that we can access that pivot information
+        return $this->belongsToMany(
+            ProductVariation::class, 'product_variation_stock_view'
+        )
+            ->withPivot(
+                'stock',
+                'in_stock'
+            );
     }
 }
