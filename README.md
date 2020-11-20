@@ -422,6 +422,8 @@ CREATE VIEW product_variation_stock_view AS
 3. we not interested in the product variation what we are interested is the pivot information the stock
 4. Reason we use belongsToMany is that we can access that pivot information
 
+### Base product stock information
+1. sum up each of the product variations in Product.php called stockCount()
 
 
 
