@@ -425,5 +425,44 @@ CREATE VIEW product_variation_stock_view AS
 ### Base product stock information
 1. sum up each of the product variations in Product.php called stockCount()
 
-
+### JSON response profiling (using laravel-debugbar)
+1. Add some profiling to see within our JSON response to see how many queries we are running
+2. We more than likely end up with problems with the relationships
+3. To do this we will install https://github.com/barryvdh/laravel-debugbar
+4. `composer require barryvdh/laravel-debugbar --dev`
+5. We will add some middleware which will add on this debug information to our json end point
+6. php artisan make:middleware ProfileJsonResponse
+7. We can use this to output any information inside Json response
+8. in ProfileJsonResponse fill the handle test it works with dd('works') in Postman
+9. Then fill the handle properly with  $request->has('_debug')
+10. Check with http://cart-api.test/api/products/coffee?_debug
+11. In postman   "nb_statements": 20, is how many statements been run
+12.In here we can check for SQL statement that running to look for any duplication
+13. To check if you have an n + 1 problem
+14. Duplicate a stock in stocks table
+15. Duplicate row in product_variation
+16. Then check in postman to see   "nb_statements": 23, incremented
+17. Problem is we should not have extra queries as we add extra records
+18. In ProductController show method, added ` $product->load(['variations', 'variations.type']);`
+19. To reduce  "nb_statements" by using load
+19. This will reduce  "nb_statements": 17 since we don't have to iterate over each one.
+20. The other thing we need to take into account is th stock
+21. $product->load(['variations', 'variations.type', 'variations.stock']);
+22. Remember we have relationship set up for stock so we need to pull that in as well.
+23. It will reduce "nb_statements": 11 again
+24. We can take out variations since that already been accessed.
+25. Go to Product.php model to see what we are pulling in
+26. Then go to ProductVariation.php and see if there anything here
+27. Then scroll down in postman and see each of the queries that were made
+28. We notice we have multiple request to our products table
+29.  "sql": "select * from \"products\" where \"products\".\"id\" = 1 limit 1",
+30. Lets add product as well $product->load(['variations.type', 'variations.stock', 'variations.product']);
+31. "nb_statements": 5 was reduced again
+32. Now lets check products page http://cart-api.test/api/products?_debug in postman
+33. We have "nb_statements": 11 queries we are executing
+34. We can do a search with postman of the queries we are executing "sql"
+35. we have product_variations stock so it looks like we should be loading that stock
+36. ProductController index() method '$products = Product::withScopes($this->scopes())->paginate(10);'
+37. We should see a reduce "nb_statements": 4
+38. You will notice with these changes it get a lot faster and respond time gets a lot quicker as well.
 

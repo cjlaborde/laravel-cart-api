@@ -16,7 +16,7 @@ class ProductController extends Controller
         # 'category' => new CategoryScope
         # 1) Get the value in request 'category'
         # 2) Pass it to new CategoryScope and before we get to next item it will be filtered down
-        $products = Product::withScopes($this->scopes())->paginate(10);
+        $products = Product::with(['variations.stock'])->withScopes($this->scopes())->paginate(10);
 
         return ProductIndexResource::collection($products);
     }
@@ -24,6 +24,9 @@ class ProductController extends Controller
     // http://cart-api.test/api/products/nike-air-max
     public function show(Product $product)
     {
+        // reduce  "nb_statements" byusing load
+        // this will reduce  "nb_statements": 23 since we don't have to iterate over each one.
+        $product->load(['variations.type', 'variations.stock', 'variations.product']);
         // ProductResource is a standard resource that extends ProductIndexResource
         return new ProductResource($product);
     }
