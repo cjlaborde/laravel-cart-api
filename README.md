@@ -466,3 +466,20 @@ CREATE VIEW product_variation_stock_view AS
 37. We should see a reduce "nb_statements": 4
 38. You will notice with these changes it get a lot faster and respond time gets a lot quicker as well.
 
+### Setting up Authentication (jwt-auth)
+1. https://github.com/tymondesigns/jwt-auth
+2. composer require tymon/jwt-auth
+3. php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+4. php artisan jwt:secret 
+5. will be used to decoding and encoding the payload
+6. config/jwt.php
+7. Secret placed on 'secret' => env('JWT_SECRET'), 
+8. You can check it has been added JWT_SECRET in .env
+9. We will change The Time Live TTL 'ttl' => env('JWT_TTL', 60), to a higher value
+10. JWT_TTL=3000
+11. Go to config/auth.php and change 'guard' => 'web',
+12. to api 'guard' => 'api',
+13. Then change 'api' => [ 'driver' => 'token' 
+14. Change it to jwt 'api' => [ 'driver' => 'jwt'
+15. Implement the JWTSubject to user model
+16. class User extends Authenticatable implements JWTSubject
