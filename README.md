@@ -476,10 +476,39 @@ CREATE VIEW product_variation_stock_view AS
 7. Secret placed on 'secret' => env('JWT_SECRET'), 
 8. You can check it has been added JWT_SECRET in .env
 9. We will change The Time Live TTL 'ttl' => env('JWT_TTL', 60), to a higher value
-10. JWT_TTL=3000
+10. JWT_TTL=3000 
 11. Go to config/auth.php and change 'guard' => 'web',
 12. to api 'guard' => 'api',
 13. Then change 'api' => [ 'driver' => 'token' 
 14. Change it to jwt 'api' => [ 'driver' => 'jwt'
 15. Implement the JWTSubject to user model
 16. class User extends Authenticatable implements JWTSubject
+
+### Registering a user
+1. truncate user table since it doesn't have a hash password
+2. in dbeaver left click user table > tools > truncate > checkmark Cascade|Restart identity > start
+3. php artisan make:controller Auth\\RegisterController
+4. http://cart-api.test/api/auth/register
+5. Laravel 7 had update where the `Route::post('register', 'Auth\RegisterController@action');` does not work anymore
+6. To update it check this solution
+7. `https://stackoverflow.com/questions/57865517/laravel-6-0-php-artisan-routelist-returns-target-class-app-http-controllers-s`
+8. We later going to create an observer inside the user model.
+9. So that everytime we create new user it automatically hashes the password
+10. Create user using postman click on Body > form-data > fill (email, password, name)
+11. Now we will crease a Resource for the endpoint we will create in future to gather all the information from a particular user
+12. When we build any application we can create Private and Public user resource
+13. PrivateUserResource will only return when is that actual user that requested that information
+14. PublicUserResource will be public for all users to see. For example a review for a product, if you implemented reviews
+15. You will a PublicUserResource that don't contain the user email and that other private information
+16. php artisan make:resource PrivateUserResource
+17. php artisan make:request Auth\\RegisterRequest 
+18. Has to be unique on users table under email unique:users,email
+19. In newer Laravel you get a 404 page instead of JsoUn error
+20. To fix it in Postman click on Headers and write  Key: Accept Value: application/json
+21. Has to be unique on unique email from the users table unique:users,email
+
+#### Testing: Registering a user
+1. This is suppose to be a feature test but we can get away with unit test for our user
+2. php artisan make:test Models\\Users\\UserTest --unit
+3.  php artisan make:test Auth\\RegistrationTest   
+4. 
