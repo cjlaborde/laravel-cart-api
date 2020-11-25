@@ -511,4 +511,12 @@ CREATE VIEW product_variation_stock_view AS
 1. This is suppose to be a feature test but we can get away with unit test for our user
 2. php artisan make:test Models\\Users\\UserTest --unit
 3.  php artisan make:test Auth\\RegistrationTest   
-4. 
+
+### Authenticating a user
+1. php artisan make:controller Auth\\LoginController
+2. Reason we use action because is makes thing more tidy when you use a controller for a single thing
+3. 422 is validation error
+4. php artisan make:request Auth\\LoginRequest
+5. php artisan make:test Auth\\LoginTest
+
+
