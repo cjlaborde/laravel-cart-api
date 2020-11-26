@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\MeController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Categories\CategoryController;
 use App\Http\Controllers\Products\ProductController;
@@ -15,6 +16,7 @@ Route::group(['prefix' => 'auth'], function () {
     // Reason we use action because is makes thing more tidy when you use a controller for a single thing
     Route::post('register', [RegisterController::class, 'action']);
     Route::post('login', [LoginController::class, 'action']);
+    Route::get('me', [MeController::class, 'action']);
 });
 
 

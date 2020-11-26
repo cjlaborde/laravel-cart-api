@@ -519,4 +519,37 @@ CREATE VIEW product_variation_stock_view AS
 4. php artisan make:request Auth\\LoginRequest
 5. php artisan make:test Auth\\LoginTest
 
+### The me endpoint
+1. http://cart-api.test/api/auth/me
+2. php artisan make:controller Auth\\MeController
+3. http://cart-api.test/api/auth/login and get the token
+4. then use the token in http://cart-api.test/api/auth/me
+5. Click on Authorization tab, TYPE Bearer Token and paste token
+6. We don't want user to get access to MeController if they not authenticated
+7. So we use a __construct or middleware at the route
+```php
+    public function __construct()
+    {
+        $this->middleware(['auth:api']);
+    }
+```
+8. This means that if we try to access http://cart-api.test/api/auth/me
+9. We get  "message": "Unauthenticated."
+10. php artisan make:test Auth\\MeTest
+11. Lets take a look at use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+12.  click on Concerns\MakesHttpRequests,
+13. then we find     public function json($method, $uri, array $data = [], array $headers = [])
+14. As you can see is almost same signature we used only difference is we are also accepting that user here.
+15. All we need to do is recall the method and also pass the header with barren token for that particular user.
+16.
+
+
+
+
+
+
+
+
+
+
 
