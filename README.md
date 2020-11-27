@@ -516,7 +516,7 @@ CREATE VIEW product_variation_stock_view AS
 1. php artisan make:controller Auth\\LoginController
 2. Reason we use action because is makes thing more tidy when you use a controller for a single thing
 3. 422 is validation error
-4. php artisan make:request Auth\\LoginRequest
+ 4. php artisan make:request Auth\\LoginRequest
 5. php artisan make:test Auth\\LoginTest
 
 ### The me endpoint
@@ -541,15 +541,18 @@ CREATE VIEW product_variation_stock_view AS
 13. then we find     public function json($method, $uri, array $data = [], array $headers = [])
 14. As you can see is almost same signature we used only difference is we are also accepting that user here.
 15. All we need to do is recall the method and also pass the header with barren token for that particular user.
-16.
 
+### The user cart relationship
+1. php artisan make:migration create_cart_user_table --create=cart_user
+2. you have to have each item in alphabetic order cart_ and users
 
-
-
-
-
-
-
+#### Testing: The user cart relationship
+1. Undefined table: 7 ERROR:  relation "product_variation_user" does not exist
+2. to fix this error we can rename it in cart() method in User.php
+3. `return $this->belongsToMany(ProductVariation::class, 'cart_user')->withPivot('quantity');`
+4. Another error `Not null violation: 7 ERROR:  null value in column "quantity" violates not-null constraint`
+5. To fix it  php migrate:rollback then set a default of 1
+6. `$table->integer('quantity')->unsigned()->default(1);`
 
 
 

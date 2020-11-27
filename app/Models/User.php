@@ -68,4 +68,11 @@ class User extends Authenticatable implements JWTSubject
         // this is used if you want to add any aditional information to the JWT payload
         return [];
     }
+
+    // will return a list of product variation that are currently in user cart.s
+    public function cart()
+    {
+        return $this->belongsToMany(ProductVariation::class, 'cart_user')
+            ->withPivot('quantity');
+    }
 }
