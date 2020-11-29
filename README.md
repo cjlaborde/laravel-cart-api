@@ -554,5 +554,46 @@ CREATE VIEW product_variation_stock_view AS
 5. To fix it  php migrate:rollback then set a default of 1
 6. `$table->integer('quantity')->unsigned()->default(1);`
 
+### Adding items to the cart
+1. Goal for this part is an endpoint that allow us to specify within a json payload a list of products we want 
+to add or product variations along side the quantities.z
+2. We going to allow for multiple products to be added at once which is very important
+3. In postman `http://cart-api.test/api/cart`
+4. Click on Body and remove all columns we sending through like email, name and password
+5. Click on raw radio button and choose JSON(application/json)
+6. Then in raw write
+7. Lets say that for example on the client side you want to allow a guest to start adding items to their cart before they checkout
+8. When they checkout you want to create user account for them and then you want to add list of products to their cart
+9. Actually store them and persist them into the database
+10. Now if you were creating an end point like this `http://cart-api.test/api/cart` posting through a single product variation id in a single quantity
+11. Lets say user added 20 item to that cart, what you will have to do is do 20 different http request to our api
+12. Add each of the items they have stored on the front end
+13. While if you allow multiple products to start with that means if you say on the client side storing them within a session in local storage for example
+14. Then you can make 1 single request for all of the products then is just 1 http request
+15. So is important to add multiple products to be added
+```json
+{
+    "products": [
+        { "id": 1, "quantity": 1 },
+        { "id": 2, "quantity": 1 }
 
+    ]
+}
+```
+16.  php artisan make:controller Cart\\CartController 
+17. Login with Post man and get the token
+18. Remember to add token to Authentication Bearer Token
+19. Alternative you can add token to postman via an environment persist accross all the request.
+20. Next thing that is important is validate each of the products
+21. This is treacky since now we have json payload and we want to validate each of the products
+22. For example check if each of the id actually exist.
+23. php artisan make:request Cart\\CartStoreRequest
+24. add ->withTimestamps to add date as well. in cart() method in User.php model
+
+#### Testing: Adding items to the cart
+1. php artisan make:test Cart\\CartTest --unit
+2. php artisan make:test Cart\\CartStoreTest 
+3. you can use dd($response->getContent()); to see output from the failure in the terminals
+4. To see that the issue with test was that in AppServiceProvider we taking a Cart and returning a new user
+5. To fix it go to Cart Controller and mode Cart $car from controller into the store method instead
 
