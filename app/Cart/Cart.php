@@ -31,11 +31,21 @@ class Cart
         // now we map through them
         return collect($products)->keyBy('id')->map(function ($product) {
             return [
-                'quantity' => $product['quantity']
+                'quantity' => $product['quantity'] + $this->getCurrentQuantity($product['id'])
             ];
             // toArray since you can't sync in a collection (->syncWithoutDetaching)
         })->toArray();
 
 //        dd($products);
+    }
+
+    protected function getCurrentQuantity($productId )
+    {
+        // where comes from Collection methods
+        if ($product = $this->user->cart->where('id', $productId)->first()) {
+            return $product->pivot->quantity;
+        }
+
+        return 0;
     }
 }

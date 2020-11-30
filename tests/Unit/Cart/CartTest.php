@@ -9,11 +9,6 @@ use Tests\TestCase;
 
 class CartTest extends TestCase
 {
-    /**
-     * A basic unit test example.
-     *
-     * @return void
-     */
     public function test_it_can_add_products_to_the_cart()
     {
         $cart = new Cart(
@@ -30,4 +25,29 @@ class CartTest extends TestCase
         // check if we have 1 item in the cart
         $this->assertCount(1, $user->fresh()->cart);
     }
+
+    public function test_it_increments_quantity_where_adding_more_products()
+    {
+        $product = ProductVariation::factory()->create();
+
+        // In here we simulating 2 different requests.
+        $cart = new Cart(
+            $user = User::factory()->create()
+        );
+
+        $cart->add([
+            ['id' => $product->id, 'quantity' => 1]
+        ]);
+
+        $cart = new Cart($user->fresh());
+
+        $cart->add([
+            ['id' => $product->id, 'quantity' => 1]
+        ]);
+
+        // grab user fresh out of the database, so that user would not have cart item in it
+        // check if we have 1 item in the cart
+        $this->assertEquals($user->fresh()->cart->first()->pivot->quantity, 2);
+    }
 }
+

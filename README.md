@@ -597,3 +597,7 @@ to add or product variations along side the quantities.z
 4. To see that the issue with test was that in AppServiceProvider we taking a Cart and returning a new user
 5. To fix it go to Cart Controller and mode Cart $car from controller into the store method instead
 
+### Incrementing quantity when 
+1. Everything we add a product we want to increase quantity in the cart
+2. To do this we create method getCurrentQuantity() in Cart.php
+
