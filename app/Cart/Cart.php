@@ -24,6 +24,13 @@ class Cart
         );
     }
 
+    public function update($productId, $quantity)
+    {
+        $this->user->cart()->updateExistingPivot($productId, [
+            'quantity' => $quantity
+        ]);
+    }
+
     public function getStorePayload($products)
     {
         // collect our products to put them into laravel collection
@@ -39,7 +46,7 @@ class Cart
 //        dd($products);
     }
 
-    protected function getCurrentQuantity($productId )
+    protected function getCurrentQuantity($productId)
     {
         // where comes from Collection methods
         if ($product = $this->user->cart->where('id', $productId)->first()) {

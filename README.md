@@ -601,3 +601,46 @@ to add or product variations along side the quantities.z
 1. Everything we add a product we want to increase quantity in the cart
 2. To do this we create method getCurrentQuantity() in Cart.php
 
+### Updating product cart quantities
+1. Duplicate in postman the tab for http://cart-api.test/api/cart 
+2. then add the product number http://cart-api.test/api/cart/3
+3. Now in Body tab move from raw to x-www/form-uriencoded
+4. Then key > quantity and value > 5
+5. then see the routes with php artisan route:list and see the parameter is http://cart-api.test/api/cart/{cart}
+6. Then we want to rewrite the route parameters
+```php
+Route::resource('cart', CartController::class, [
+    // paramenters we want to overwrite
+    'parameters' => [
+        'cart' => 'productVariation'
+    ]
+]);
+```
+7. Then we check again the routes with php artisan route:list
+8. Now for the cart we accepting productVariation instead http://cart-api.test/api/cart/{productVariation
+9. In postman switch POST to Patch
+10. now you can update quantity with x-www/form-uriencoded 
+
+### Testing: Updating product cart quantities
+1. php artisan make:request Cart\\CartUpdateRequest
+2. php artisan make:test Cart\\CartUpdateTest
+3. We doing testing in Step proccess 1) test_it_fails_if_unauthenticated 2) test_it_fails_if_product_cant_be_found()
+4. Had error since I mispelled required in CartUpdateRequest `'quantity' => 'requires|numeric|min:1'` 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

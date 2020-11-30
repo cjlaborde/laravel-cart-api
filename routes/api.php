@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Cart\CartController;
 use App\Http\Controllers\Categories\CategoryController;
 use App\Http\Controllers\Products\ProductController;
+use App\Models\ProductVariation;
 
 //dd(App::environment());
 
@@ -22,4 +23,15 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('me', [MeController::class, 'action']);
 });
 
-Route::resource('cart', CartController::class);
+//Route::resource('cart', CartController::class, [
+//    // paramenters we want to overwrite
+//    'parameters' => [
+//        'cart' => ProductVariation::class
+//    ]
+//]);
+
+Route::resource('cart', CartController::class, [
+    'parameters' => [
+        'cart' => 'productVariation'
+    ]
+]);
