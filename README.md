@@ -621,13 +621,17 @@ Route::resource('cart', CartController::class, [
 9. In postman switch POST to Patch
 10. now you can update quantity with x-www/form-uriencoded 
 
-### Testing: Updating product cart quantities
+#### Testing: Updating product cart quantities
 1. php artisan make:request Cart\\CartUpdateRequest
 2. php artisan make:test Cart\\CartUpdateTest
 3. We doing testing in Step proccess 1) test_it_fails_if_unauthenticated 2) test_it_fails_if_product_cant_be_found()
 4. Had error since I mispelled required in CartUpdateRequest `'quantity' => 'requires|numeric|min:1'` 
 
+### Deleting cart products
+1. You can delete by creating a delete mething inside of Cart.php that will detach $this->user->cart()->detach($productId);
 
+#### Testing: Deleting cart products
+1. php artisan make:test Cart\\CartDestroyTest
 
 
 

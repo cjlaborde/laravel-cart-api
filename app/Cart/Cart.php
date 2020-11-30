@@ -31,6 +31,11 @@ class Cart
         ]);
     }
 
+    public function delete($productId)
+    {
+        $this->user->cart()->detach($productId);
+    }
+
     public function getStorePayload($products)
     {
         // collect our products to put them into laravel collection
