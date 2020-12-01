@@ -633,6 +633,8 @@ Route::resource('cart', CartController::class, [
 #### Testing: Deleting cart products
 1. php artisan make:test Cart\\CartDestroyTest
 
+### Emptying the cart
+1. Create method empty() in Cart.php `$this->user->cart()->detach();`
 
 
 

@@ -36,6 +36,12 @@ class Cart
         $this->user->cart()->detach($productId);
     }
 
+    // remove all products from the cart
+    public function empty()
+    {
+        $this->user->cart()->detach();
+    }
+
     public function getStorePayload($products)
     {
         // collect our products to put them into laravel collection
