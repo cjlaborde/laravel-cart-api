@@ -636,12 +636,63 @@ Route::resource('cart', CartController::class, [
 ### Emptying the cart
 1. Create method empty() in Cart.php `$this->user->cart()->detach();`
 
+### Getting the user's cart
+1. Duplicate http://cart-api.test/api/cart/3 tab
+2. Then set it to GET request to http://cart-api.test/api/cart
+3. Need to Create index method for the endpoint to work
+4. Create resource for index() method to use
+5. php artisan make:resource Cart\\CartResource
+6. Send POST to http://cart-api.test/api/cart make sure to log in and get token in Authorization
+7. then send a GET request to http://cart-api.test/api/cart to see the product
+8. We also need Base product it belongs to
+9. is not enough to say 250g since this is just a product variation
+10. What we can do is not reusing a ProductVariationResource since inside it we don't show the product
+11. php artisan make:resource Cart\\CartProductVariationResource
+12. we can now extend the ProductVariationResource
+13. We can use array_merge to make it more flexible without having lots of things all over the place
+14. Now you can get access to Base Product and the other Variation Data in CartProductVariationResource
+15. Now since we have access to the Pivot as well we want show quantity
+16. We can change total to test it on the cart_user table
+17. Now using total we can get the total price of the quantity
+18. `$total = new  Money($this->pivot->quantity * $this->price->amount());`
+19. Now remember to use _debug to see how many query request we getting `http://cart-api.test/api/cart?_debug`
+20. Now you can see the total queries to be "nb_statements": 11,
+21. Now test if we add more products using postman
+22. http://cart-api.test/api/cart Body raw
+```php
+{
+    "products": [
+        { "id": 3, "quantity": 1 }
 
+    ]
+}
+```
+23. Change it to another product
+```php
+{
+    "products": [
+        { "id": 4, "quantity": 5 }
 
+    ]
+}
+```
+24. Now you can see that it increased "nb_statements": 20,
+25. We can add in index() CartController a load to reduce nb_statements
+26. we try $request->user()->load('cart'); and then check Postman http://cart-api.test/api/cart?_debug
+27. To Realize that it doesn't work  so we instead use  $request->user()->load('cart.products');
+28. http://cart-api.test/api/cart?_debug
+29. "nb_statements": 12
+30. Since we are dealing with things like the stock  $request->user()->load('cart.product.variations.stock');
+31. http://cart-api.test/api/cart?_debug and see it was reduced as well  "nb_statements": 7
+32. Lets now add $request->user()->load('cart.product.variations.stock', 'cart.stock');
+33. now sql statement were reduced as well "nb_statements": 6 
+34. You can check for more searching for "sql"
 
-
-
-
+### Testing: Getting the user's cart
+1. php artisan make:test Cart\\CartIndexTest
+2. An alternative is create  API test in isolation and not much in feature test
+3. since feature test, is just seeing that we can access the endpoint that we can generally see that information
+4. You can also create a protected function in ProductVariationResource called getTotal to make code more organized
 
 
 

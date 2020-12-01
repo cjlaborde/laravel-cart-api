@@ -6,6 +6,7 @@ use App\Cart\Cart;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Cart\CartStoreRequest;
 use App\Http\Requests\Cart\CartUpdateRequest;
+use App\Http\Resources\Cart\CartResource;
 use App\Models\ProductVariation;
 use Illuminate\Http\Request;
 
@@ -14,6 +15,16 @@ class CartController extends Controller
     public function __construct()
     {
         $this->middleware(['auth:api']);
+    }
+
+    public function index(Request $request)
+    {
+        // reduce nb_statements
+        $request->user()->load(['cart.product.variations.stock', 'cart.stock']);
+
+
+        // reason we pass $request->user() is because of what we use inside our CartResource
+        return new CartResource($request->user());
     }
 
     // The middleware will only allow us to access user if that user is authenticated
