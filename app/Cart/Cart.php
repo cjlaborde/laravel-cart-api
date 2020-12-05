@@ -42,6 +42,11 @@ class Cart
         $this->user->cart()->detach();
     }
 
+    public function isEmpty()
+    {
+        return $this->user->cart->sum('pivot.quantity') === 0;
+    }
+
     public function getStorePayload($products)
     {
         // collect our products to put them into laravel collection

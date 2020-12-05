@@ -17,14 +17,25 @@ class CartController extends Controller
         $this->middleware(['auth:api']);
     }
 
-    public function index(Request $request)
+    public function index(Request $request, Cart $cart)
     {
         // reduce nb_statements
         $request->user()->load(['cart.product.variations.stock', 'cart.stock']);
 
 
         // reason we pass $request->user() is because of what we use inside our CartResource
-        return new CartResource($request->user());
+        return (new CartResource($request->user()))
+            ->additional([
+                'meta' => $this->meta($cart)
+            ]);
+
+    }
+
+    protected function meta(Cart $cart)
+    {
+        return [
+            'empty' => $cart->isEmpty(),
+        ];
     }
 
     // The middleware will only allow us to access user if that user is authenticated

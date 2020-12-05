@@ -694,6 +694,16 @@ Route::resource('cart', CartController::class, [
 3. since feature test, is just seeing that we can access the endpoint that we can generally see that information
 4. You can also create a protected function in ProductVariationResource called getTotal to make code more organized
 
+### Checking if the cart is empty
+1. Create method isEmpty inside Cart.php
+2. You could use `return $this->user->cart->count(); // 0` but you will have problems when item goes out of stock.
+3. So is better to do a sum instead since it will be more accurate and avoid this issue. 
+4. Sum up the items quantity in the cart and not actually the items that are in the cart
+5. Go to Postman and sign up `http://cart-api.test/api/auth/login` and get the token
+6. then `http://cart-api.test/api/cart` and click authentication tab and paste the token in as Bearer token
+
+#### Testing: Checking if the cart is empty
+
 
 
 
