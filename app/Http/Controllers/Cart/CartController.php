@@ -19,6 +19,7 @@ class CartController extends Controller
 
     public function index(Request $request, Cart $cart)
     {
+        $cart->sync();
         // reduce nb_statements
         $request->user()->load(['cart.product.variations.stock', 'cart.stock']);
 
@@ -36,7 +37,8 @@ class CartController extends Controller
         return [
             'empty' => $cart->isEmpty(),
             'subtotal' => $cart->subtotal()->formatted(),
-            'total' => $cart->total()->formatted()
+            'total' => $cart->total()->formatted(),
+            'changed' => $cart->hasChanged()
         ];
     }
 

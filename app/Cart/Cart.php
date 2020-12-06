@@ -8,6 +8,8 @@ class Cart
 {
     protected $user;
 
+    protected $changed = false;
+
     public function __construct(User $user)
     {
         $this->user = $user;
@@ -34,6 +36,28 @@ class Cart
     public function delete($productId)
     {
         $this->user->cart()->detach($productId);
+    }
+
+    public function sync()
+    {
+        $this->user->cart->each(function ($product) {
+            // Grab minimum quantity that is available
+            $quantity = $product->minStock($product->pivot->quantity);
+//             dd($quantity);
+
+            // tell users if this change have happened to their cart
+            $this->changed = $quantity != $product->pivot->quantity;
+
+            // update pivot: it will change cart stock amount to the available stock amount when you add more items than currently in stock
+            $product->pivot->update([
+                'quantity' => $quantity
+            ]);
+        });
+    }
+
+    public function hasChanged()
+    {
+        return $this->changed;
     }
 
     // remove all products from the cart

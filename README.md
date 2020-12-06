@@ -701,10 +701,24 @@ Route::resource('cart', CartController::class, [
 4. Sum up the items quantity in the cart and not actually the items that are in the cart
 5. Go to Postman and sign up `http://cart-api.test/api/auth/login` and get the token
 6. then `http://cart-api.test/api/cart` and click authentication tab and paste the token in as Bearer token
-
-#### Testing: Checking if the cart is empty
-
 ### Getting the cart totals
+
+### Syncing the cart (Never Order more than the current stock)
+1. Send a Get request with postman to http://cart-api.test/api/cart
+2. You can now add items to cart_user then add products in stock.
+3. Make sure there are no orders in product_variation_order
+4. Now it give return the maximum amount of the current stock if your cart quantity is over that limit
+5. update pivot: it will change cart stock amount to the available stock amount when you add more items than currently in stock
+6. We also need to tell users if this change have happened to their cart
+7. Create    protected $changed = false;
+8. `$this->changed = $quantity != $product->pivot->quantity`
+9. Then create method called hasChanged() that gets the changed value
+10. This can be used if user tries to modify to purchase 200 items when that is not even an option
+11. Also useful when you want to stop people ordering more stock that is available
+
+### Testing: Syncing the cart (Never Order more than the current stock)
+
+
 
 
 

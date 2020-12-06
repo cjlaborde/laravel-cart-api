@@ -20,6 +20,12 @@ class ProductVariation extends Model
         return new Money($value);
     }
 
+    // Takes an amount that we set example 200 and then return 10 since is the only available current stock
+    public function minStock($count)
+    {
+        return min($this->stockCount(), $count);
+    }
+
     public function priceVaries()
     {
         // this is not going to work since we got money instance for each

@@ -59,4 +59,20 @@ class CartIndexTest extends TestCase
                 'total' => '$0.00'
             ]);
     }
+
+    public function test_it_syncs_the_cart()
+    {
+        $user = User::factory()->create();
+
+        $user->cart()->attach(
+            $product = ProductVariation::factory()->create(), [
+                'quantity' => 2
+            ]
+        );
+
+        $this->jsonAs($user, 'GET', 'api/cart')
+            ->assertJsonFragment([
+                'changed' => true
+            ]);
+    }
 }
