@@ -47,6 +47,21 @@ class Cart
         return $this->user->cart->sum('pivot.quantity') === 0;
     }
 
+    public function subtotal()
+    {
+        // Access each product we have in cart and multiply the price with quantity and sum them up.
+        $subtotal = $this->user->cart->sum(function ($product) {
+            return $product->price->amount() * $product->pivot->quantity;
+        });
+
+        return new Money($subtotal);
+    }
+
+    public function total()
+    {
+        return $this->subtotal();
+    }
+
     public function getStorePayload($products)
     {
         // collect our products to put them into laravel collection

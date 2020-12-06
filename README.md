@@ -704,6 +704,7 @@ Route::resource('cart', CartController::class, [
 
 #### Testing: Checking if the cart is empty
 
+### Getting the cart totals
 
 
 
