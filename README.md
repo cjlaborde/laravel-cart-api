@@ -716,9 +716,10 @@ Route::resource('cart', CartController::class, [
 10. This can be used if user tries to modify to purchase 200 items when that is not even an option
 11. Also useful when you want to stop people ordering more stock that is available
 
-### Testing: Syncing the cart (Never Order more than the current stock)
+#### Testing: Syncing the cart (Never Order more than the current stock)
 
 
+### Testing minimum stock
 
 
 
