@@ -721,9 +721,8 @@ Route::resource('cart', CartController::class, [
 
 ### Testing minimum stock
 
-
-
-
+### Showing the product variation type
+1. See the type in Postman `http://cart-api.test/api/cart`
 
 
 
