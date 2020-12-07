@@ -724,5 +724,26 @@ Route::resource('cart', CartController::class, [
 ### Showing the product variation type
 1. See the type in Postman `http://cart-api.test/api/cart`
 
+### SQL optimizations with laravel debugbar
+1. Lets check our endpoints with debugbar
+2. `http://cart-api.test/api/cart?_debug` "nb_statements": 9,
+3. Lets reduce number by going to CartController.php
+4. Do a search for "sql" in Postman to see the common queries
+5. We can see that grabing stock count for product variation from the stock view we created is causing some problems
+6. It seems the problem is cased in Cart.php in sync() method
+7. We can add return in the start of method to see if is the one causing problems then count the amount of nb_statements
+8. and we see the number was reduced
+9. This is problem since we are calling the minStock method over in the productVariation
+10. As well minStock use the stockCount which require the information of the user as we use this
+11. we can fix this by doing the ego loading somewhere else perhaps service provider
+12. In AppServiceProvider register() we going to load what we need
+13. Now we check `http://cart-api.test/api/products/coffee?_debug` then do a search of "sql"
+14. Seems it looks great so we test another link
+15. `http://cart-api.test/api/products?_debug`
+16. This will help your page load faster when we reload page
+17. No matter the amount of items, we want it to load very quickly
+
+
+
 
 

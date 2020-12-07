@@ -21,7 +21,7 @@ class CartController extends Controller
     {
         $cart->sync();
         // reduce nb_statements
-        $request->user()->load(['cart.product.variations.stock', 'cart.stock']);
+        $request->user()->load(['cart.product', 'cart.product.variations.stock', 'cart.stock', 'cart.type']);
 
 
         // reason we pass $request->user() is because of what we use inside our CartResource

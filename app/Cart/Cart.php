@@ -40,6 +40,7 @@ class Cart
 
     public function sync()
     {
+//        return; # used to debug with laravel debug bar
         $this->user->cart->each(function ($product) {
             // Grab minimum quantity that is available
             $quantity = $product->minStock($product->pivot->quantity);
