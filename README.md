@@ -756,3 +756,10 @@ Route::resource('cart', CartController::class, [
 3. php artisan make:factory CountryFactory
 4. php artisan make:test Models\\Addresses\\AddressTest --unit
 
+### Listing Addresses
+1. `php artisan make:controller Addresses\\AddressesController`
+2. `php artisan make:resource AddressResource`
+3. `php artisan make:resource CountryResource`
+
+### Testing: Listing Addresses
+1. `php artisan make:test Addresses\\AddressIndexTest`

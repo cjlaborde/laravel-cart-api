@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Addresses\AddressController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\MeController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -12,6 +13,7 @@ use App\Models\ProductVariation;
 
 Route::resource('categories', CategoryController::class);
 Route::resource('products', ProductController::class);
+Route::resource('addresses', AddressController::class);
 
 
 Route::group(['prefix' => 'auth'], function () {
