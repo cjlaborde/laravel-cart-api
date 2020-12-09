@@ -750,5 +750,9 @@ Route::resource('cart', CartController::class, [
 4. there was error with seeder since you didn't set timestamps to fix it
 5. Go to the model Country.php and set $timestamps = false;
 
-
+### Addresses setup
+1. php artisan make:model Address -m
+2. php artisan make:factory AddressFactory
+3. php artisan make:factory CountryFactory
+4. php artisan make:test Models\\Addresses\\AddressTest --unit
 
