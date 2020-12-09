@@ -23,13 +23,6 @@ Route::group(['prefix' => 'auth'], function () {
     Route::get('me', [MeController::class, 'action']);
 });
 
-//Route::resource('cart', CartController::class, [
-//    // paramenters we want to overwrite
-//    'parameters' => [
-//        'cart' => ProductVariation::class
-//    ]
-//]);
-
 Route::resource('cart', CartController::class, [
     'parameters' => [
         'cart' => 'productVariation'

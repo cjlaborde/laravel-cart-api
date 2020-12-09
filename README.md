@@ -743,7 +743,12 @@ Route::resource('cart', CartController::class, [
 16. This will help your page load faster when we reload page
 17. No matter the amount of items, we want it to load very quickly
 
-
+### Countries table
+1. `php artisan make:model Country -m`
+2. create a seeder to populate the table
+3. php artisan make:seeder CountriesTableSeeder
+4. there was error with seeder since you didn't set timestamps to fix it
+5. Go to the model Country.php and set $timestamps = false;
 
 
 
