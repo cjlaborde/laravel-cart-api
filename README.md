@@ -761,5 +761,15 @@ Route::resource('cart', CartController::class, [
 2. `php artisan make:resource AddressResource`
 3. `php artisan make:resource CountryResource`
 
-### Testing: Listing Addresses
+#### Testing: Listing Addresses
 1. `php artisan make:test Addresses\\AddressIndexTest`
+
+### Storing an address
+1. Create store() Method in AddressController.php
+2. Send a Post request to `http://cart-api.test/api/addresses`
+3. Then click on Body Tab to send data
+4. `php artisan make:request Addresses\\AddressStoreRequest`
+
+#### Testing: Storing an address
+1. `php artisan make:test Addresses\\AddressStoreTest`
+2. 
