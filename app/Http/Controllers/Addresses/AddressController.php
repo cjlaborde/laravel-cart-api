@@ -26,7 +26,7 @@ class AddressController extends Controller
     {
         // Make the address instead of create before we attach it to particular user
         $address = Address::make($request->only([
-            'name', 'address_1' , 'city', 'postal_code', 'country_id'
+            'name', 'address_1' , 'city', 'postal_code', 'country_id', 'default'
         ]));
 
         $request->user()->addresses()->save($address);

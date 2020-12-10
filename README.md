@@ -772,4 +772,26 @@ Route::resource('cart', CartController::class, [
 
 #### Testing: Storing an address
 1. `php artisan make:test Addresses\\AddressStoreTest`
-2. 
+
+### Toggling default addresses
+1. We need to toggle default address when user has multiple addresses
+2. `php artisan make:migration add_default_to_addresses_table --table=addresses`
+3. We going to add a default column to the address table
+4. Create static boot method on the Address.php model and do a dd($address)
+5. Then go to postman and send s POST to `http://cart-api.test/api/addresses`
+6. We don't have default since we have not set it on fillable
+```php
+    protected $fillable = [
+        'name',
+        'address_1',
+        'city',
+        'postal_code',
+        'country_id',
+        'default'
+    ];
+```
+7. After sending POST we see is a string instead of Boolean so we create a setDefaultAttribute() method in Address method
+8. Create if statement that checks if user has a default address already and set all the newly created address default to false.
+9. Use Postman now and send 2 POST request to `http://cart-api.test/api/addresses` and first address should be default true and others false
+
+### Testing: Toggling default addresses
