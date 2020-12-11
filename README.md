@@ -795,3 +795,4 @@ Route::resource('cart', CartController::class, [
 9. Use Postman now and send 2 POST request to `http://cart-api.test/api/addresses` and first address should be default true and others false
 
 ### Testing: Toggling default addresses
+
