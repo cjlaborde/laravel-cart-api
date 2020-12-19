@@ -802,12 +802,13 @@ Route::resource('cart', CartController::class, [
 
 #### Testing:  Countries endpoint
 1. `php artisan make:test Countries\\CountryIndexTest`
-2. 
 
+### Creating shipping methods
+1. `php artisan make:model ShippingMethod -m`
 
-
-
-
+#### Testing: Creating shipping methods
+1. `php artisan make:test ShippingMethods\\ShippingMethodTest --unit`
+2. `php artisan make:factory ShippingMethodFactory`
 
 
 
