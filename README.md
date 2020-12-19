@@ -794,5 +794,21 @@ Route::resource('cart', CartController::class, [
 8. Create if statement that checks if user has a default address already and set all the newly created address default to false.
 9. Use Postman now and send 2 POST request to `http://cart-api.test/api/addresses` and first address should be default true and others false
 
-### Testing: Toggling default addresses
+#### Testing: Toggling default addresses
+
+### Countries endpoint
+1. `php artisan make:controller Countries\\CountryController`
+2. check `http://cart-api.test/api/countries` in postman to see all the countries
+
+#### Testing:  Countries endpoint
+1. `php artisan make:test Countries\\CountryIndexTest`
+2. 
+
+
+
+
+
+
+
+
 
