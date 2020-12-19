@@ -807,8 +807,10 @@ Route::resource('cart', CartController::class, [
 1. `php artisan make:model ShippingMethod -m`
 
 #### Testing: Creating shipping methods
-1. `php artisan make:test ShippingMethods\\ShippingMethodTest --unit`
+1. `php artisan make:test Models\\ShippingMethods\\ShippingMethodTest --unit`
 2. `php artisan make:factory ShippingMethodFactory`
+3. `php artisan make:migration create_country_shipping_method_table --create=country_shipping_method`
+4. `php artisan make:test Models\\Countries\\CountryTest --unit`
 
 
 
