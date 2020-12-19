@@ -809,9 +809,64 @@ Route::resource('cart', CartController::class, [
 #### Testing: Creating shipping methods
 1. `php artisan make:test Models\\ShippingMethods\\ShippingMethodTest --unit`
 2. `php artisan make:factory ShippingMethodFactory`
-3. `php artisan make:migration create_country_shipping_method_table --create=country_shipping_method`
-4. `php artisan make:test Models\\Countries\\CountryTest --unit`
 
+### Hooking up shipping methods to countries
+1. `php artisan make:migration create_country_shipping_method_table --create=country_shipping_method`
+2. `php artisan make:test Models\\Countries\\CountryTest --unit`
 
+### Getting the right shipping methods for an address
+1. `php artisan make:controller Addresses\\AddressesShippingController`
+2. Create route that requires user to be logged in, in api.php
+3. use postman and send a GET request to `http://cart-api.test/api/addresses/4/shipping`
+4. Make sure you get a valid address id in address table
+5. You need to add the auth in the Controller, since it didn't work on the api route
+   ```php
+   public function __construct()
+   {
+        $this->middleware(['auth:api']);
+   }
+```
+6. `php artisan make:resource ShippingMethodResource`
+7.  Only see shipping methods available for our own addresses
+8. To resolve this make a policy
+9. `php artisan make:policy AddressPolicy`
+10. Then connect it on AuthServiceProvider.php
+```php
+    protected $policies = [
+         'App\Models\Address' => 'App\Policies\AddressPolicy',
+    ];
+```
+11. Now add the policy to the method
+```php
+    public function action(Address $address)
+    {
+        // only see shipping methods available for our own addresses
+        $this->authorize('show', $address);
 
+        return ShippingMethodResource::collection(
+            $address->country->shippingMethods
+        );
+    }
+```
+12. In the policy check if id match the currently logged user id
+```php
+    public function show(User $user, Address $address)
+    {
+        return $user->id == $address->user_id;
+    }
+```
+13. Now send with postman GET request `http://cart-api.test/api/addresses/4/shipping`
+14. You can use this with the checkout where we select an address and then recheck which shipping methods are available for that particular address.
 
+### Testing: Getting the right shipping methods for an address
+1. `php artisan make:test Addresses\\AddressShippingTest`
+```php
+        $address = Address::factory()->create([
+            'user_id' => $user-id,
+            // we going to check that when we add shipping method to this country, that we are adding for this user address
+            // wrap the country definition so we have access to that entire country not just the id
+            'country' => ($country = Country::factory()->create())->id
+        ]);
+```
+2. You can also remove assertion to check if everything working correctly
+3. Unable to find JSON fragment: [{"id":1}] means you need to add Id to the ShippingMethodResource
