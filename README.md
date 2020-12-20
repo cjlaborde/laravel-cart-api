@@ -878,3 +878,13 @@ Route::resource('cart', CartController::class, [
 #### Testing: Adding Shipping onto the subtotal
 1. Create test for money class
 2. php artisan make:test Money\\MoneyTest --unit
+
+### Adding address and shipping method relation to orders
+1. `php artisan make:migration add_address_and_shipping_to_order_table --table=orders` 
+
+
+#### Testing: Adding address and shipping method relation to orders
+1. Make test to check relationships between models
+2. `php artisan make:test Models\\Orders\\OrderTest --unit`
+3. `php artisan make:factory OrderFactory`
+
