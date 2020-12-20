@@ -33,4 +33,19 @@ class Money
 
         return $formatter->format($this->money);
     }
+
+    public function add(Money $money)
+    {
+        // what we doing is passing the money we want to add on, then reassign it with the underlying version
+        // instance of the price we want to add on. Money represent our class not the underlying instance
+        $this->money = $this->money->add($money->instance());
+
+        // return $this so we can continue chaining
+        return $this;
+    }
+
+    public function instance()
+    {
+        return $this->money;
+    }
 }

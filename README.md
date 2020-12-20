@@ -870,3 +870,11 @@ Route::resource('cart', CartController::class, [
 ```
 2. You can also remove assertion to check if everything working correctly
 3. Unable to find JSON fragment: [{"id":1}] means you need to add Id to the ShippingMethodResource
+
+### Adding Shipping onto the subtotal
+1. use postman and send a GET method to `http://cart-api.test/api/cart?shipping_method_id=1`
+2. You also later add validation so that it doesn't accept none existing shipping_method_id
+
+#### Testing: Adding Shipping onto the subtotal
+1. Create test for money class
+2. php artisan make:test Money\\MoneyTest --unit
