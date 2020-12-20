@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddAddressAndShippingToOrderTable extends Migration
+class AddStatusToOrdersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,7 @@ class AddAddressAndShippingToOrderTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->integer('address_id')->unsigned()->index();
-            $table->integer('shipping_method_id')->unsigned()->index();
-
-            $table->foreign('address_id')->references('id')->on('addresses');
-            $table->foreign('shipping_method_id')->references('id')->on('shipping_methods');
+            $table->string('status')->default('pending ');
         });
     }
 
@@ -30,7 +26,7 @@ class AddAddressAndShippingToOrderTable extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('address_id', 'shipping_method_id');
+            $table->dropColumn('status');
         });
     }
 }

@@ -888,3 +888,19 @@ Route::resource('cart', CartController::class, [
 2. `php artisan make:test Models\\Orders\\OrderTest --unit`
 3. `php artisan make:factory OrderFactory`
 
+### Order statuses and defaults
+1. We going to use const in the model which is an alternative to using ENUMS in the database, since they can be restricting when you want to update them.
+```php
+    // we can also show these in a status if we want to.
+    const PENDING = 'pending';
+    const PROCESSING = 'processing';
+    const PAYMENT_FAILED = 'payment_failed';
+    const COMPLETED = 'completed';
+```
+2. php artisan make:migration add_status_to_orders_table --table=orders
+3. set the boot() method to set our default state pending
+
+### Testing: Order statuses and defaults
+1. 
+
+

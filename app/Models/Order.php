@@ -9,6 +9,28 @@ class Order extends Model
 {
     use HasFactory;
 
+    // we can also show these in a status if we want to.
+    const PENDING = 'pending';
+    const PROCESSING = 'processing';
+    const PAYMENT_FAILED = 'payment_failed';
+    const COMPLETED = 'completed';
+
+    protected $fillable = [
+        'status',
+        'address_id',
+        'shipping_method_id'
+    ];
+
+    public static function boot()
+    {
+        // when ever you create a order it will set status to pending
+        parent::boot();
+
+        static::creating(function ($order) {
+            $order->status = self::PENDING;
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
