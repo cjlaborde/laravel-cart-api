@@ -8,8 +8,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Cart\CartController;
 use App\Http\Controllers\Categories\CategoryController;
 use App\Http\Controllers\Countries\CountryController;
+use App\Http\Controllers\Orders\OrderController;
 use App\Http\Controllers\Products\ProductController;
-use App\Models\ProductVariation;
 
 //dd(App::environment());
 
@@ -17,6 +17,9 @@ Route::resource('categories', CategoryController::class);
 Route::resource('products', ProductController::class);
 Route::resource('addresses', AddressController::class);
 Route::resource('countries', CountryController::class);
+Route::resource('orders', OrderController::class);
+
+
 Route::get('addresses/{address}/shipping', [AddressesShippingController::class, 'action']);
 
 Route::group(['prefix' => 'auth'], function () {

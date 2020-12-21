@@ -900,7 +900,37 @@ Route::resource('cart', CartController::class, [
 2. php artisan make:migration add_status_to_orders_table --table=orders
 3. set the boot() method to set our default state pending
 
-### Testing: Order statuses and defaults
-1. 
+#### Testing: Order statuses and defaults
+
+### Basic order validation
+1. `php artisan make:controller Orders\\OrderController`
+2. Validation is is very important for a few reasons
+3. Lets say we create order with an address We need to know that the address for an order belongs to the user 
+   Otherwise someone can create order and ship it to any address which is not a great idea
+4. Second we need to make sure the shipping_method_id we been using is valid as well
+5. For example if I am from UK I can easily find out the shipping_method_id  and switch it over
+6. We need to check that the shipping method for this order is valid for the address that is being used for this order
+7. We going to create a basic validation then create a more complex custom validation rule that will work for our valid shipping method
+8. `http://cart-api.test/api/orders`
+9. create request to add all of our order validation rules   
+10. `php artisan make:request Orders\\OrderStoreRequest`
+11. In OrderStoreRequest to get access to currently signed in user
+12. in FormRequest `class OrderStoreRequest extends FormRequest` we follow it
+13. use Illuminate\Foundation\Http\FormRequest; and see that it extend our base Request
+14. `class FormRequest extends Request implements ValidatesWhenResolved`
+15. We can get our user so all we have to do is $this->user()->id
+16. Error: Laravel action is not authorized to fix it remember to set authorize to true in the request OrderStoreRequest
+```php
+    public function authorize()
+    {
+        return true;
+    }
+```
+17. In Postman go to Body and add address_id to send make sure is a valid one currently in the database
+
+### Testing: Basic order validation
+1. php artisan make:test Orders\\OrderStoreTest
+2. We don't test for error message since then it would make our test very fragile when we change error message
+3. Instead we look for `->assertJsonValidationErrors(['shipping_method_id']);`
 
 
