@@ -933,4 +933,8 @@ Route::resource('cart', CartController::class, [
 2. We don't test for error message since then it would make our test very fragile when we change error message
 3. Instead we look for `->assertJsonValidationErrors(['shipping_method_id']);`
 
+### Custom shipping method validation rule
+1. php artisan make:rule ValidShippingMethod
+
+
 
