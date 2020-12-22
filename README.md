@@ -943,3 +943,5 @@ Route::resource('cart', CartController::class, [
 #### Testing: Creating an order
 1. `test_it_can_create_an_order()` in OrderStoreTest going to be a complex test that is going to need a protected function to work
 2. Create the protected function orderDependencies(User $user)
+
+### Revisiting orders and product relations
