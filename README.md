@@ -947,3 +947,16 @@ Route::resource('cart', CartController::class, [
 ### Revisiting orders and product relations
 
 ### Fixing cart store failling test
+
+### Attaching products when ordering
+1. In postman send `http://cart-api.test/api/orders`
+2. Send a POST with postman to `http://cart-api.test/api/cart`
+3. Then on Body > raw
+```js
+{
+    "products": [
+        { "id": 2, "quantity":2 }
+    ]
+}
+```
+4. 
