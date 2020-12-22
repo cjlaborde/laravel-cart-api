@@ -26,6 +26,7 @@ class OrderFactory extends Factory
         return [
             'address_id' => Address::factory()->create()->id,
             'shipping_method_id' => ShippingMethod::factory()->create()->id,
+            'subtotal' => 1000
         ];
     }
 }

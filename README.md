@@ -928,7 +928,7 @@ Route::resource('cart', CartController::class, [
 ```
 17. In Postman go to Body and add address_id to send make sure is a valid one currently in the database
 
-### Testing: Basic order validation
+#### Testing: Basic order validation
 1. php artisan make:test Orders\\OrderStoreTest
 2. We don't test for error message since then it would make our test very fragile when we change error message
 3. Instead we look for `->assertJsonValidationErrors(['shipping_method_id']);`
@@ -937,4 +937,9 @@ Route::resource('cart', CartController::class, [
 1. php artisan make:rule ValidShippingMethod
 
 
+### Creating an order
+1. `php artisan make:migration add_subtotal_to_orders_table --table=orders`
 
+#### Testing: Creating an order
+1. `test_it_can_create_an_order()` in OrderStoreTest going to be a complex test that is going to need a protected function to work
+2. Create the protected function orderDependencies(User $user)
