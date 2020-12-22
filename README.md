@@ -945,3 +945,5 @@ Route::resource('cart', CartController::class, [
 2. Create the protected function orderDependencies(User $user)
 
 ### Revisiting orders and product relations
+
+### Fixing cart store failling test
