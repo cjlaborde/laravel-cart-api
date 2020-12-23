@@ -19,6 +19,10 @@ class OrderController extends Controller
 
     public function store(OrderStoreRequest $request, Cart $cart)
     {
+        if ($cart->isEmpty()) {
+            return response(null, 400);
+        }
+
         $order = $this->createOrder($request, $cart);
 //        dd(get_class($cart->products()));
 //        dd($cart->products()->forSyncing());

@@ -107,6 +107,28 @@ class OrderStoreTest extends TestCase
         ]);
     }
 
+    public function test_it_fails_to_create_order_if_cart_is_empty()
+    {
+        $user = User::factory()->create();
+
+        $user->cart()->sync([
+            // grab the id only
+            ($product = $this->productWithStock())->id => [
+                'quantity' => 0
+            ]
+        ]);
+
+//        dd($user->cart()->first()->pivot->quantity);
+
+        list($address, $shipping) = $this->orderDependencies($user);
+
+       $response = $this->jsonAs($user, 'POST', 'api/orders', [
+            'address_id' => $address->id,
+            'shipping_method_id' => $shipping->id
+        ])
+           ->assertStatus(400);
+    }
+
     public function test_it_attaches_the_products_to_the_order()
     {
         $user = User::factory()->create();

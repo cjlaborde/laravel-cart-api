@@ -972,3 +972,26 @@ Route::resource('cart', CartController::class, [
 
 #### Testing: Refactoring to a custom collection
 1. `php artisan make:test Collections\\ProductVariationCollectionTest --unit`
+
+### Falling if the cart is empty
+1. We don't want order created if they don't have any product attached to them.
+2. delete tables data a) product_variation_order b) orders c) cart_user
+3. In postman do GET request to `http://cart-api.test/api/cart`
+4. we also have in Cart the isEmpty method which not only checks if there are no products
+5. Checks if quantity have been reduce as part of not being available
+6. So we can use isEmpty again in store method to check if our cart is empty
+7. Lets try first to check how we can create empty order before we implement the if statement on store method
+8. in postman send POST request to `http://cart-api.test/api/orders`
+9. It does work but is an useless empty order
+
+
+
+
+
+
+
+
+
+
+
+
