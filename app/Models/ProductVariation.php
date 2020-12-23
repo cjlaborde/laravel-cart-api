@@ -6,6 +6,7 @@ use App\Cart\Money;
 use App\Models\Traits\HasPrice;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Collections\ProductVariationCollection;
 
 class ProductVariation extends Model
 {
@@ -74,5 +75,11 @@ class ProductVariation extends Model
                 'stock',
                 'in_stock'
             );
+    }
+
+    // Custom Collection that extend base laravel collection
+    public function newCollection(array $models = [])
+    {
+        return new ProductVariationCollection($models);
     }
 }

@@ -20,15 +20,10 @@ class OrderController extends Controller
     public function store(OrderStoreRequest $request, Cart $cart)
     {
         $order = $this->createOrder($request, $cart);
+//        dd(get_class($cart->products()));
+//        dd($cart->products()->forSyncing());
 
-        // sync up order and only create 1 query
-        $products = $cart->products()->keyBy('id')->map(function ($product) {
-            return [
-                'quantity' => $product->pivot->quantity
-            ];
-        })->toArray();
-
-        $order->products()->sync($products);
+        $order->products()->sync($cart->products()->forSyncing());
     }
 
     protected function createOrder(Request $request, Cart $cart)

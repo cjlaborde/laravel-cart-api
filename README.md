@@ -959,4 +959,16 @@ Route::resource('cart', CartController::class, [
     ]
 }
 ```
-4. 
+
+### Refactoring to a custom collection
+1. dd(get_class($cart->products())); get_class is used to not get too much output just the class `use Illuminate\Database\Eloquent\Collection;`
+2. We going to modify and extend the Collection with custom one.
+3. In ProductVariation create a new newCustomCollection method
+4. Which will be Custom Collection that extend base laravel collection
+3. create class that extends collection there called ProductVariationCollection.php
+4. Now dd(get_class($cart->products())); and see `"App\Models\Collections\ProductVariationCollection"` instead
+5. create a forSyncing method in ProductVariationCollection
+6. So you can use it here `$order->products()->sync($cart->products()->forSyncing());`
+
+#### Testing: Refactoring to a custom collection
+1. `php artisan make:test Collections\\ProductVariationCollectionTest --unit`
