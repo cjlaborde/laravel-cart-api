@@ -984,6 +984,18 @@ Route::resource('cart', CartController::class, [
 8. in postman send POST request to `http://cart-api.test/api/orders`
 9. It does work but is an useless empty order
 
+### Emptying the cart when ordering
+<https://laravel.com/docs/8.x/events>
+1. Create an event that process the payment first of all and then empty the cart in the OrderController.php store() method
+2.  Go to EventService.php and add the OrderCreated and EmptyCart paths so you can generate them later
+3. `php artisan` look for event section
+4. We going to use `  event:generate  Generate the missing events and listeners based on registration`
+5. `php artisan event:generate`
+6. add even to OrderController store method
+7. Send POST request to `http://cart-api.test/api/cart`
+8. Send GET request to `http://cart-api.test/api/cart` See items in cart
+9. Send a POST request to `http://cart-api.test/api/orders` to create order
+10. Send GET request to `http://cart-api.test/api/cart` to see that cart products [] is empty again
 
 
 

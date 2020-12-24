@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\Orders;
 
+use App\Events\Order\OrderCreated;
 use App\Models\Address;
 use App\Models\ProductVariation;
 use App\Models\ShippingMethod;
 use App\Models\Stock;
 use App\Models\User;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
 class OrderStoreTest extends TestCase
@@ -107,6 +109,26 @@ class OrderStoreTest extends TestCase
         ]);
     }
 
+    public function test_it_attaches_the_products_to_the_order()
+    {
+        $user = User::factory()->create();
+
+        $user->cart()->sync(
+            $product = $this->productWithStock()
+        );
+
+        list($address, $shipping) = $this->orderDependencies($user);
+
+        $response = $this->jsonAs($user, 'POST', 'api/orders', [
+            'address_id' => $address->id,
+            'shipping_method_id' => $shipping->id
+        ]);
+
+        $this->assertDatabaseHas('product_variation_order', [
+            'product_variation_id' => $product->id
+        ]);
+    }
+
     public function test_it_fails_to_create_order_if_cart_is_empty()
     {
         $user = User::factory()->create();
@@ -129,7 +151,26 @@ class OrderStoreTest extends TestCase
            ->assertStatus(400);
     }
 
-    public function test_it_attaches_the_products_to_the_order()
+    public function test_it_fires_an_order_created_event()
+    {
+        Event::fake();
+        $user = User::factory()->create();
+
+        $user->cart()->sync(
+            $product = $this->productWithStock()
+        );
+
+        list($address, $shipping) = $this->orderDependencies($user);
+
+        $response = $this->jsonAs($user, 'POST', 'api/orders', [
+            'address_id' => $address->id,
+            'shipping_method_id' => $shipping->id
+        ]);
+
+        Event::assertDispatched(OrderCreated::class);
+    }
+
+    public function test_it_empties_the_cart_when_ordering()
     {
         $user = User::factory()->create();
 
@@ -139,14 +180,15 @@ class OrderStoreTest extends TestCase
 
         list($address, $shipping) = $this->orderDependencies($user);
 
-       $response = $this->jsonAs($user, 'POST', 'api/orders', [
+        $response = $this->jsonAs($user, 'POST', 'api/orders', [
             'address_id' => $address->id,
             'shipping_method_id' => $shipping->id
         ]);
 
-        $this->assertDatabaseHas('product_variation_order', [
-            'product_variation_id' => $product->id
-        ]);
+//        dd($user->cart);
+        // check if cart is empty
+        $this->assertEmpty($user->cart);
+
     }
 
     protected function productWithStock()

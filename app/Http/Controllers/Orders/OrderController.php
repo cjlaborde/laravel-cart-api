@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Orders;
 
 use App\Cart\Cart;
+use App\Events\Order\OrderCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Orders\OrderStoreRequest;
 use App\Models\ProductVariation;
@@ -28,6 +29,9 @@ class OrderController extends Controller
 //        dd($cart->products()->forSyncing());
 
         $order->products()->sync($cart->products()->forSyncing());
+
+        // Fire an event and process the payment first of all and then empty the cart
+        event(new OrderCreated($order));
     }
 
     protected function createOrder(Request $request, Cart $cart)
