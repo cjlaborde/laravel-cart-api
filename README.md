@@ -997,8 +997,30 @@ Route::resource('cart', CartController::class, [
 9. Send a POST request to `http://cart-api.test/api/orders` to create order
 10. Send GET request to `http://cart-api.test/api/cart` to see that cart products [] is empty again
 
+### Returning order details
+1. `php artisan make:resource OrderResource`
+2. We don't have anything in cart so we need to make order with postman
+3. Send POST to `http://cart-api.test/api/cart` to add item to cart
+4. send POST to `http://cart-api.test/api/orders`
+5. To test things out in store() method in Returning order details
+6. comment these lines of code
+```php
+    public function store(OrderStoreRequest $request, Cart $cart)
+    {
+//        if ($cart->isEmpty()) {
+//            return response(null, 400);
+//        }
 
-
+        $order = $this->createOrder($request, $cart);
+        $order->products()->sync($cart->products()->forSyncing());
+        
+//        event(new OrderCreated($order));
+        return new OrderResource($order);
+    }
+```
+7. With Postman send a POST request to `http://cart-api.test/api/cart` to add item in cart
+8. Then send POST to `http://cart-api.test/api/orders` to make order multiple times to see the id increment
+9. This way we test we getting the right response back
 
 
 

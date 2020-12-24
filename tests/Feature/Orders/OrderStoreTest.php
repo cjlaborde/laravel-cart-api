@@ -124,8 +124,11 @@ class OrderStoreTest extends TestCase
             'shipping_method_id' => $shipping->id
         ]);
 
+//        dd(json_decode($response->getContent())->data->id); // you get the id from the order id you created as part of the test
+
         $this->assertDatabaseHas('product_variation_order', [
-            'product_variation_id' => $product->id
+            'product_variation_id' => $product->id,
+            'order_id' => json_decode($response->getContent())->data->id
         ]);
     }
 
@@ -154,6 +157,7 @@ class OrderStoreTest extends TestCase
     public function test_it_fires_an_order_created_event()
     {
         Event::fake();
+
         $user = User::factory()->create();
 
         $user->cart()->sync(
@@ -167,7 +171,9 @@ class OrderStoreTest extends TestCase
             'shipping_method_id' => $shipping->id
         ]);
 
-        Event::assertDispatched(OrderCreated::class);
+        Event::assertDispatched(OrderCreated::class, function ($event) use ($response) {
+            return $event->order->id === json_decode($response->getContent())->data->id;
+        });
     }
 
     public function test_it_empties_the_cart_when_ordering()
