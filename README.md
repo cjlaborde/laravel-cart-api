@@ -1022,7 +1022,18 @@ Route::resource('cart', CartController::class, [
 8. Then send POST to `http://cart-api.test/api/orders` to make order multiple times to see the id increment
 9. This way we test we getting the right response back
 
-
+### Fixing up failing order test
+1. This error is happening because we have an empty table once we creating this test
+2. What causing this in store() method we have an if ($cart->isEmpty()) that prevent ordering from happening if cart is empty
+3. The problem is the test not actual app.
+4. After we added the if statement to prevent ordering from happening if cart is empty
+5. Since previously when we wrote this tes to create an order we were not thinking  about that
+6. So we make sure we have a list of products in our cart with stock
+```php
+        $user->cart()->sync(
+            $product = $this->productWithStock()
+        );
+```
 
 
 

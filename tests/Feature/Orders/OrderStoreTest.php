@@ -91,6 +91,10 @@ class OrderStoreTest extends TestCase
     {
         $user = User::factory()->create();
 
+        $user->cart()->sync(
+            $product = $this->productWithStock()
+        );
+
         // destructuring this and use it on our payload
         list($address, $shipping) = $this->orderDependencies($user);
 
