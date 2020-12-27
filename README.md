@@ -1035,8 +1035,119 @@ Route::resource('cart', CartController::class, [
         );
 ```
 
+### Warning users of cart changes, plus some refactoring (Fix minus quantity issue)
+1. We going to show warning to the user if the item they trying to order suddenly ends up out of stock.
+2. In postman Add item to your cart by sending Post to `http://cart-api.test/api/cart`
+3. Then send a GET request with postman `http://cart-api.test/api/cart`
+4. Then we see we added id: 4 which is the product_variation_id
+5. Then go to stocks database and set product_variation_id: 4 quantity to 0
+6. Then we send GET request with postman `http://cart-api.test/api/cart` which is going to sync our cart
+7. Now we go and see product_variation_order table and see there is quantity of 1 yes we know we don't have that quantity available.
+8. What we need to do is go to CartController and see what we do is $cart->sync();
+9. What we going to do is in OrderController.php sync the cart as we sync the order. adding `$cart->sync();`
+10. In postman Add item to your cart by sending Post to `http://cart-api.test/api/cart`
+11. Then send a GET request with postman `http://cart-api.test/api/cart` and see that quantity is -2 so is not working
+12. Now lets delete all in product_variation_order table
+13. Delete all in orders table
+14. Now send POST request to `http://cart-api.test/api/orders` now we see it doesn't work and we have  "subtotal": "-7500"
+15. The issue seems to be with Cart.php isEmpty()
+```php 
+    public function isEmpty()
+    {
+        return $this->user->cart->sum('pivot.quantity') === 0;
+    }
+```
+16. Instead lets change it to <= 0
+```php  
+    public function isEmpty()
+    {
+        return $this->user->cart->sum('pivot.quantity') <= 0;
+    }
+```
+17. Now run phpunit to see we didn't break anything for changing the code
+18. Now lets delete all in product_variation_order table
+19. Delete all in orders table
+20. We should not create any of these with minus quantity
+21. In postman Add item to your cart by sending Post to `http://cart-api.test/api/cart`
+22. Then send a GET request with postman `http://cart-api.test/api/cart`
+23. Now we should have quantity of 0
+24. Now try to make order with `http://cart-api.test/api/orders` and see that you get a Status: 400 Bad Request
+26. In postman Add item to your cart by sending Post to `http://cart-api.test/api/cart`
+27. Then send a GET request with postman `http://cart-api.test/api/cart`
+28. Make sure there is nothing in orders table and
+29. Then set stop to 1 again to cart and  again with `http://cart-api.test/api/orders`
+30. Now since you using $cart->sync() in different places you don't want to have it in controller
+31. Instead extact it to middleware
+32. `php artisan make:middleware Cart\\Sync`
+33. Add middleware to HTTP/Kernel.php
+```php 
+    protected $routeMiddleware = [
+        'cart.sync' => \App\Http\Middleware\Cart\Sync::class,
+    ];
+```
+34. Then add the cart.sync to the middleware in OrderController
+```php 
+    public function __construct()
+    {
+        $this->middleware(['auth:api', 'cart.sync']);
+    }
+```
+35. ` Tests\Feature\Orders\OrderStoreTest::test_it_fails_if_not_authenticated` test failing because in
+37. cart.sync here
+```php 
+    public function __construct()
+    {
+        $this->middleware(['auth:api', 'cart.sync']);
+    }
+```
+37. This test is failing because we putting it out of the container
+```php
+   public function __construct(Cart $cart)
+    {
+        $this->cart = $cart;
+    }
+```
+38. What we do is go to our AppServiceProviders.php when we register the cart return null value
+```php
+    public function register()
+    {
+        // now we can always have it in our container
+        $this->app->singleton(Cart::class, function ($app) {
+            if (!$app->auth->user()) {
+                return null;
+            }
+            $app->auth->user()->load([
+                'cart.stock'
+            ]);
 
-
-
-
+            return new Cart($app->auth->user());
+        });
+    }
+```
+#### Cart middleware so if cart store() is empty it will return null
+1. `php artisan make:middleware Cart\\ResponseIfEmpty`
+2. It will replace store() method if statement that check if cart is empty
+```php
+    if ($cart->isEmpty()) {
+        return response(null, 400);
+    }
+```
+3. Now we can remove it and add in ResponseIfEmpty middleware
+```php 
+    public function handle(Request $request, Closure $next)
+    {
+        if ($this->cart->isEmpty()) {
+            return response()->json([
+                'message' => 'Cart is empty'
+            ], 400);
+        }
+    }
+```
+4. We have issue since middleware is being run before we hit the store method
+5. To fix this in tests that fails you need to add
+```php 
+    $user->cart()->sync(
+        $product = $this->productWithStock()
+    );
+```
 
