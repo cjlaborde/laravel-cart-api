@@ -1150,4 +1150,16 @@ Route::resource('cart', CartController::class, [
         $product = $this->productWithStock()
     );
 ```
+### Orders endpoint
+1. Create index method in OrderController.php to grab the order to show it
+2. We have problem that 'cart.sync', 'cart.isnotempty' should not apply to this method
+3. So we can use only so that the middleware only apply to store() method
+```php 
+        $this->middleware(['cart.sync', 'cart.isnotempty'])->only('store');
+```
+4. Send Get request with postman to `http://cart-api.test/api/orders`
 
+#### Testing: Orders endpoint
+1. `php artisan make:test Orders\\OrderIndexTest`
+2. Test test_it_orders_by_the_latest_first()
+3. 
