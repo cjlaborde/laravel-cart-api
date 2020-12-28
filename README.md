@@ -1162,4 +1162,10 @@ Route::resource('cart', CartController::class, [
 #### Testing: Orders endpoint
 1. `php artisan make:test Orders\\OrderIndexTest`
 2. Test test_it_orders_by_the_latest_first()
-3. 
+3. test_it_has_pagination()
+
+### Formatting order total and subtotal
+1. In Postman send Get Request to `http://cart-api.test/api/orders`
+2. We modify "subtotal:" by using to "subtotal": {},
+3. Using `public function getSubtotalAttribute($subtotal)`
+4. Send Post Request to `http://cart-api.test/api/orders`

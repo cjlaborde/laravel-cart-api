@@ -18,7 +18,10 @@ class OrderResource extends JsonResource
             'id' => $this->id,
             'status' => $this->status,
             'created_at' => $this->created_at->toDateTimeString(),
-            'subtotal' => $this->subtotal,
+            // formatted comes from app/Cart/Money.php
+            'subtotal' => $this->subtotal->formatted(),
+            // total() from Order.php
+            'total' => $this->total()->formatted(),
             'products' => ProductVariationResource::collection(
                 $this->whenLoaded('products')
             ),
