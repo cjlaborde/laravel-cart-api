@@ -1169,3 +1169,53 @@ Route::resource('cart', CartController::class, [
 2. We modify "subtotal:" by using to "subtotal": {},
 3. Using `public function getSubtotalAttribute($subtotal)`
 4. Send Post Request to `http://cart-api.test/api/orders`
+
+### Product variation product relationship
+1. Send post request to `http://cart-api.test/api/orders` with postman
+2. Send post request to `http://cart-api.test/api/orders?_debug` with postman to see the rp_statements of laravel debugbar
+3. "nb_statements": 47 which is a lot of queries and we should reduce amount
+4. We can start reducing them in OrderController.php
+```php
+       $orders = $request->user()->orders()
+            ->with([
+                'products',
+                'address',
+                'shippingMethod'
+            ])
+            ->latest()
+            ->paginate(10);
+```
+5. We also load products.product the main product of product variation to reduce queries
+```php 
+    ->with([
+        'products',
+        'products.product',
+        'address',
+        'shippingMethod'
+    ])
+```
+6.   "nb_statements": 23, queries got reduced with this change.
+7. add new order and product_variation_order to database and see that "nb_statements": 25 does increase
+8. What we can do is do a search for "sql" in Postman to see what look like is being query too much.
+9. We see product_variation is appearing too much so we add `'products.product.variations',`
+```php
+    ->with([
+        'products',
+        'products.product',
+        'products.product.variations',
+        'address',
+        'shippingMethod'
+    ])
+```
+10. Yet seems it didn't reduce nb_statements": 25 
+11. Now we add `'products.product.variations.stock',` we can find stock in ProductVariation.php methods it reduced and nb_statements": 20
+12. We also going to ass `products.type` as well and it reduced "nb_statements": 16 queries again.
+13. Now we search for "sql" again
+```php 
+"sql": "select \"product_variations\".*, \"product_variation_stock_view\".\"product_variation_id\" as \"pivot_product_variation_id\", \"product_variation_stock_view\".\"stock\" as \"pivot_stock\", \"product_variation_stock_view\".\"in_stock\" as \"pivot_in_stock\" from \"product_variations\" inner join \"product_variation_stock_view\" on \"product_variations\".\"id\" = \"product_variation_stock_view\".\"product_variation_id\" where \"product_variation_stock_view\".\"product_variation_id\" = 8",
+"sql": "select \"product_variations\".*, \"product_variation_stock_view\".\"product_variation_id\" as \"pivot_product_variation_id\", \"product_variation_stock_view\".\"stock\" as \"pivot_stock\", \"product_variation_stock_view\".\"in_stock\" as \"pivot_in_stock\" from \"product_variations\" inner join \"product_variation_stock_view\" on \"product_variations\".\"id\" = \"product_variation_stock_view\".\"product_variation_id\" where \"product_variation_stock_view\".\"product_variation_id\" = 8",
+"sql": "select \"product_variations\".*, \"product_variation_stock_view\".\"product_variation_id\" as \"pivot_product_variation_id\", \"product_variation_stock_view\".\"stock\" as \"pivot_stock\", \"product_variation_stock_view\".\"in_stock\" as \"pivot_in_stock\" from \"product_variations\" inner join \"product_variation_stock_view\" on \"product_variations\".\"id\" = \"product_variation_stock_view\".\"product_variation_id\" where \"product_variation_stock_view\".\"product_variation_id\" = 8",
+```
+14. So we add `'products.stock'` and reduced again "nb_statements": 12
+15. Now we can remove one of the orders and product_variation_order 
+16. And we should see the exact same result
