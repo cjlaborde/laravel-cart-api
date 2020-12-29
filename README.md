@@ -1170,7 +1170,7 @@ Route::resource('cart', CartController::class, [
 3. Using `public function getSubtotalAttribute($subtotal)`
 4. Send Post Request to `http://cart-api.test/api/orders`
 
-### Product variation product relationship
+### Product variation product relationship and reduce queries with laravel debugbar
 1. Send post request to `http://cart-api.test/api/orders` with postman
 2. Send post request to `http://cart-api.test/api/orders?_debug` with postman to see the rp_statements of laravel debugbar
 3. "nb_statements": 47 which is a lot of queries and we should reduce amount
@@ -1219,3 +1219,32 @@ Route::resource('cart', CartController::class, [
 14. So we add `'products.stock'` and reduced again "nb_statements": 12
 15. Now we can remove one of the orders and product_variation_order 
 16. And we should see the exact same result
+
+
+### Fixing a syncing bug
+1. If you have more than one product, and product 1 changes we set $this->changed = true but is product 2 comes after that and have not changed
+It will always change $this->change = false, so if first product changes you not going to be alerted.
+2. We going to modify tests to help us fix this issue
+3. Test will detect issue n test_it_can_check_if_the_cart_has_changed_after_syncing()
+```php
+    $user->cart()->attach([
+        $product->id => [
+            'quantity' => 2
+        ],
+        $anotherProduct->id => [
+            'quantity' => 0
+        ],
+    ]);
+```
+3. Now to fix issue we use if statement in Cart.php sync() method
+4. Change this
+```php 
+   $this->changed = $quantity != $product->pivot->quantity;
+```
+5. to this which will now only change value if this evaluate to true.
+```php 
+    if ($quantity != $product->pivot->quantity) {
+        $this->changed = true;
+    }
+```
+

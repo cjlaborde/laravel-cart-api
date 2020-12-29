@@ -64,7 +64,10 @@ class Cart
 //             dd($quantity);
 
             // tell users if this change have happened to their cart
-            $this->changed = $quantity != $product->pivot->quantity;
+            // now only change value if this evaluate to true.
+            if ($quantity != $product->pivot->quantity) {
+                $this->changed = true;
+            }
 
             // update pivot: it will change cart stock amount to the available stock amount when you add more items than currently in stock
             $product->pivot->update([

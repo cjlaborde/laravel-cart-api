@@ -157,15 +157,23 @@ class CartTest extends TestCase
             $user = User::factory()->create()
         );
 
-        $user->cart()->attach(
-            $product = ProductVariation::factory()->create(), [
+        $product = ProductVariation::factory()->create();
+        $anotherProduct = ProductVariation::factory()->create();
+
+        $user->cart()->attach([
+            $product->id => [
                 'quantity' => 2
-            ]
-        );
+            ],
+            $anotherProduct->id => [
+                'quantity' => 2
+            ],
+        ]);
 
         $cart->sync(); // this will end having no quantity since we actually have not attach any stock to the product
 
         $this->assertEquals($user->fresh()->cart->first()->pivot->quantity, 0);
+        // get you can get second product by targeting is position 1
+        $this->assertEquals($user->fresh()->cart->get(1)->pivot->quantity, 0);
     }
 
     public function test_it_can_check_if_the_cart_has_changed_after_syncing()
@@ -174,11 +182,17 @@ class CartTest extends TestCase
             $user = User::factory()->create()
         );
 
-        $user->cart()->attach(
-            $product = ProductVariation::factory()->create(), [
+        $product = ProductVariation::factory()->create();
+        $anotherProduct = ProductVariation::factory()->create();
+
+        $user->cart()->attach([
+            $product->id => [
                 'quantity' => 2
-            ]
-        );
+            ],
+            $anotherProduct->id => [
+                'quantity' => 0
+            ],
+        ]);
 
         $cart->sync(); // this will end having no quantity since we actually have not attach any stock to the product
 
