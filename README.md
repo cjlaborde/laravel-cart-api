@@ -1248,3 +1248,41 @@ It will always change $this->change = false, so if first product changes you not
     }
 ```
 
+### Setting up payment methods
+1. Going to be similar to addresses
+2. php artisan make:model PaymentMethod -m
+3. php artisan make:factory PaymentMethodFactory
+   
+
+
+4. php artisan make:test Models\PaymentMethods\\PaymentMethodTest --unit
+
+5. We found problem that in migration we have unique index set for provider id, since we got 2 payment method they going to conflict and get error
+```php
+Illuminate\Database\QueryException : SQLSTATE[23505]: Unique violation: 7 ERROR:  duplicate key value violates unique constraint "payment_methods_provider_id_unique"
+DETAIL:  Key (provider_id)=(abc) already exists. (SQL: insert into "payment_methods" ("card_type", "last_four", "provider_id", "default", "user_id", "updated_at", "created_at") 
+values (Visa, 4242, abc, 1, 1, 2020-12-30 01:57:09, 2020-12-30 01:57:09) returning "id")
+```
+6. the issue is that we hardcoded in the PaymentMethodFactory
+```php
+   public function definition()
+    {
+        return [
+            'card_type' => 'Visa',
+            'last_four' => '4242',
+            'provider_id' => 'abc',
+        ];
+    }
+```
+7. So we create random provider_id so that the id is unique instead of static
+
+```php 
+     public function definition()
+    {
+        return [
+            'card_type' => 'Visa',
+            'last_four' => '4242',
+            'provider_id' => str_random(10),
+        ];
+    }
+```
