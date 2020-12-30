@@ -1311,4 +1311,57 @@ values (Visa, 4242, abc, 1, 1, 2020-12-30 01:57:09, 2020-12-30 01:57:09) returni
         });
 ```
 
+### Payment methods index endpoint
+1. php artisan make:controller PaymentMethods\\PaymentMethodController
+2. Create route in api.php `Route::resource('paymentMethods', PaymentMethodController::class);`
+3. Check in Postman to see if route is working by sending get request to `http://cart-api.test/api/payment-methods`
+4. Do a dd() in PaymentMethodController.php index method and  create 2 payment methods in database
+```php 
+    public function index(Request $request)
+    {
+        dd($request->user()->paymentMethods);
+    }
+```
+5. Now send Get Request to Postman to see the information `http://cart-api.test/api/payment-methods`
+6. Now make resource to display that data php artisan make:resource PaymentMethodResource
+7. Then use the PaymentMethodResource in the index method to display data you specified.
+```php
+  public function index(Request $request)
+    {
+//        dd($request->user()->paymentMethods);
+        return PaymentMethodResource::collection(
+            $request->user()->paymentMethods
+        );
+    }
+```
+8. Now send Get Request to Postman to see the information `http://cart-api.test/api/payment-methods`
+```json
+{
+    "data": [
+        {
+            "id": 1,
+            "card_type": "Visa",
+            "last_four": "4242",
+            "default": true
+        },
+        {
+            "id": 2,
+            "card_type": "Mastercard",
+            "last_four": "1234",
+            "default": false
+        }
+    ]
+}```
+9. Now we have the information we get to display on the front end.
+10. Now we add some authentication to PaymentMethodController.php
+```php
+    public function __construct()
+    {
+        $this->middleware(['auth:api']);
+    }
+```
+11. Then test if it authenticated with postman by removing bearer token
 
+
+#### Testing: Payment methods index endpoint
+1. php artisan make:test PaymentMethods\\PaymentMethodIndexTest
