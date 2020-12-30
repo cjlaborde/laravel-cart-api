@@ -1286,3 +1286,29 @@ values (Visa, 4242, abc, 1, 1, 2020-12-30 01:57:09, 2020-12-30 01:57:09) returni
         ];
     }
 ```
+
+### Refractoring defaults to a trait
+1. In Address model we going to make this dynamic
+```php
+    static::creating(function ($address) {
+//            dd($address);
+        // If the user already has default address set the other ones defaults to false after
+        if ($address->default) {
+            $address->user->addresses()->update([
+                'default' => false
+            ]);
+        }
+    });
+```
+2. by using newQuery
+```php
+       static::creating(function ($address) {
+            if ($address->default) {
+                $address->newQuery()->where('user_id', $address->user->id)->update([
+                    'default' => false
+                ]);
+            }
+        });
+```
+
+
