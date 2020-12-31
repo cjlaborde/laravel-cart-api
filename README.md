@@ -1402,3 +1402,25 @@ values (Visa, 4242, abc, 1, 1, 2020-12-30 01:57:09, 2020-12-30 01:57:09) returni
 15. Now we need to modify every test that relies on `$this->oderDependencies`
 16. We get multiple errors since OrderFactory doesn't generate payment_mehod_id
 17. Still get error since we forget to assign user_id to payment_method_id
+
+### Setting up Stripe
+1. <https://github.com/stripe/stripe-php>
+2. `composer require stripe/stripe-php`
+3. in stripe.com create new store
+4. Grab the keys from Developers > Api keys <https://dashboard.stripe.com/test/apikeys>
+5. go to config/services.php to see where to add the Key
+```php
+    'stripe' => [
+        'secret' => env('STRIPE_SECRET')
+    ]
+```
+6. Now we can access it using stripe.secret
+7. We can add it on boot in AppServiceProvider.php
+```php 
+    public function boot()
+    {
+        Stripe::setApiKey(config('services.stripe.secret'));
+    }
+```
+8. do a phpunit to check changes didn't break anything
+
