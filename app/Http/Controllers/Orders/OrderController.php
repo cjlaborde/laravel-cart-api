@@ -47,7 +47,6 @@ class OrderController extends Controller
 //        if ($cart->isEmpty()) {
 //            return response(null, 400);
 //        }
-
         $order = $this->createOrder($request, $cart);
 //        dd(get_class($cart->products()));
 //        dd($cart->products()->forSyncing());
@@ -57,14 +56,13 @@ class OrderController extends Controller
 
         // Fire an event and process the payment first of all and then empty the cart
         event(new OrderCreated($order));
-
         return new OrderResource($order);
     }
 
     protected function createOrder(Request $request, Cart $cart)
     {
         return $request->user()->orders()->create(
-            array_merge($request->only(['address_id', 'shipping_method_id']), [
+            array_merge($request->only(['address_id', 'shipping_method_id', 'payment_method_id']), [
                 'subtotal' => $cart->subtotal()->amount()
             ])
         );

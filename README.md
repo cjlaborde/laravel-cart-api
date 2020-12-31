@@ -1365,3 +1365,40 @@ values (Visa, 4242, abc, 1, 1, 2020-12-30 01:57:09, 2020-12-30 01:57:09) returni
 
 #### Testing: Payment methods index endpoint
 1. php artisan make:test PaymentMethods\\PaymentMethodIndexTest
+
+### Attaching payment methods to orders (Not allow user to use other users payment method)
+1. php artisan make:migration add_payment_method_id_to_orders_table --table=orders
+2. We can check if the payment method belong to current user in OrderStoreRequest.php
+   ```php 
+   'payment_method_id' => [
+    'required',
+    Rule::exists('payment_methods', 'id')->where(function ($builder) {
+        $builder->where('user_id', $this->user()->id);
+    })
+],
+```
+3. In Postman send GET request to `http://cart-api.test/api/cart` we don't have product
+4. Lets add product to cart with Postman POST request `http://cart-api.test/api/cart` 
+5. login with `http://cart-api.test/api/auth/login` if you get error to get bearer token
+6. Send GET request with Postman to see now we have item in cart `http://cart-api.test/api/cart`
+7. Now Try to create order with POST request in postman to `http://cart-api.test/api/orders`
+8. Make sure that there is stock or you going to end up putting quantity 0 in cart, and not be able to make order.
+9. and you will see the new validation rule is working properly
+```json
+{
+    "message": "The given data was invalid.",
+    "errors": {
+        "payment_method_id": [
+            "The payment method id field is required."
+        ]
+    }
+}
+```
+10. Try to create order with POST request in postman to `http://cart-api.test/api/orders` and add payment_method_id with another user id
+11. Will give validation error
+12. Now use currently logged in id and it should work
+13. Since we added payment_method_id the test ` test_it_can_create_an_order()` should fail.
+14. So we need to now modify $this->oderDependencies and modify the test
+15. Now we need to modify every test that relies on `$this->oderDependencies`
+16. We get multiple errors since OrderFactory doesn't generate payment_mehod_id
+17. Still get error since we forget to assign user_id to payment_method_id
