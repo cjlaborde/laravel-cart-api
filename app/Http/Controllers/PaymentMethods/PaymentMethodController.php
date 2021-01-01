@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers\PaymentMethods;
 
+use App\Cart\Payments\Gateway;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PaymentMethodResource;
 use Illuminate\Http\Request;
 
 class PaymentMethodController extends Controller
 {
-    public function __construct()
+    // Inject the Gateway
+    public function __construct(Gateway $gateway)
     {
         $this->middleware(['auth:api']);
+        $this->gateway = $gateway;
     }
 
     public function index(Request $request)
@@ -19,5 +22,20 @@ class PaymentMethodController extends Controller
         return PaymentMethodResource::collection(
             $request->user()->paymentMethods
         );
+    }
+
+    // Store a card
+    public function store(Request $request)
+    {
+//        dd($this->gateway);
+        // inject gateway depencency in our app
+        // we need to know how to get user back so we use withUser
+        $card = $this->gateway->withUser($request->user())
+            // will create new customer/if exist then this method do nothing
+            ->createCustomer()
+//        dd($card);
+                // we add card using stripe token we get from api
+            ->addCard($request->token);
+            // will return Card Model or payment method
     }
 }

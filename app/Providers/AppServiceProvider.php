@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Cart\Cart;
+use App\Cart\Payments\Gateway;
+use App\Cart\Payments\Gateways\StripeGateway;
 use Illuminate\Support\ServiceProvider;
 use Stripe\Stripe;
 
@@ -24,6 +26,12 @@ class AppServiceProvider extends ServiceProvider
             }
 
             return new Cart($app->auth->user());
+        });
+
+        // here we hook up the Gateway provider
+        $this->app->singleton(Gateway::class, function () {
+        // So switching over gateway providers
+            return new StripeGateway();
         });
     }
 

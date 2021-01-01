@@ -1424,3 +1424,28 @@ values (Visa, 4242, abc, 1, 1, 2020-12-30 01:57:09, 2020-12-30 01:57:09) returni
 ```
 8. do a phpunit to check changes didn't break anything
 
+### Mocking up our payment gateway (Be Able to Switch to either Stripe,Braintree or others)
+1. This will be collection of methods in 1 class.
+2. Which will allow us to create customer, add a cart, charge user with their default payment method
+3. This will be tied down to payment provider we are using
+4. With Postman send a POST request to `http://cart-api.test/api/payment-methods` to see what is missing
+5. We can use AppServiceProvider to declare Gateway which we can use to switch payment method from Stripe to another.
+6. Now we can verify if interface working by sending POST request to `http://cart-api.test/api/payment-methods`
+ ```js
+    "message": "Class App\\Cart\\Payments\\Gateways\\StripeGateway contains 2 abstract methods and must therefore be declared abstract or implement the remaining methods (App\\Cart\\Payments\\Gateway::withUser, App\\Cart\\Payments\\Gateway::createCustomer)",
+```
+7. PaymentMethodController.php store() method remains the same regardless how we switch gateway
+8. If you later want to implement braintree you just have to implement
+```
+a) BraintreeGateway.php
+b) BraintreeCustomer.php
+```
+8. We need to return $this to be able to chain any other method. in  app /Cart/Payments/Gateways/StripeGateway.php  withUser method!
+9. In stripeGateway.php
+```php
+    public function createCustomer()
+    {
+        return new StripeGatewayCustomer();
+    }
+```
+10. If where you will see that we connect stripeGateway.php to  StripeGatewayCustomer.php
