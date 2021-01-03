@@ -1449,3 +1449,61 @@ b) BraintreeCustomer.php
     }
 ```
 10. If where you will see that we connect stripeGateway.php to  StripeGatewayCustomer.php
+
+### Storing a payment method
+1. At the moment we don't want to add card yet in PaymentMethodController.php
+```php 
+    public function store(Request $request)
+    {
+        $card = $this->gateway->withUser($request->user())
+            ->createCustomer();
+        dd($card);
+//            ->addCard($request->token);
+    }
+```
+2. php artisan make:migration add_gateway_customer_id_to_users_table --table=users
+
+3. Do a dd($customer) to see what happens.
+```php 
+    public function createCustomer()
+    {
+        // we will implement method that will get customer from stripe, based on the user gateway_customer_id
+        if ($this->user->gateway_customer_id) {
+            return 'customer';
+        }
+
+        // create stripe customer here and return that as part of our stripe gateway customer object.
+
+        $customer = $this->createStripeCustomer();
+
+        dd($customer);
+        return new StripeGatewayCustomer();
+    }
+```
+4. Now send a POST request to `http://cart-api.test/api/payment-methods` using POSTMAN
+5. Now you can see we get a customer back from stripe
+6. You can also use Stripe dashboard to see this new created customer
+7. Send POST request to `http://cart-api.test/api/payment-methods`
+8. After adding id to database you will get error
+```
+"message": "Call to a member function addCard() on string",
+```
+9. You can check customer id here `https://dashboard.stripe.com/test/customers/cus_IgUKHnTDgrYld1` writing the customer id in the end the one in user table cart database
+10. We need to truncate and delete all files from payment_methods 
+11.  Right click on payment_methods table, that needs to be truncated in Dbeaver Database Navigator, choose Tools->Truncate
+12. Click on Restart Identity and Cascade click 'Start'. That's all.
+13. Send POST request to `http://cart-api.test/api/payment-methods` we should get null since we are using dd() and method not returning information
+12. Now check Stripe Dashboard for new customer `https://dashboard.stripe.com/test/customers/cus_Igkt5xUNbyv9R3`
+13. Then click on card and see the `ID card_1I5NO2HCos07RG12lTRiDHf6` match the card id in payment_methods table and compare it with the provider_id 
+14. There is a problem that each card added is being added as default true, it should only be last card.
+15. To fix this go to StripeGateWayCustomer.php create method and add 'default' => true
+```php
+        $this->gateway->user()->paymentMethods()->create([
+            'provider_id' => $card->id,
+            'card_type' => $card->brand,
+            'last_four' => $card->last4,
+            'default' => true
+        ]);
+```
+Each time you make changes truncate payment_methods and in users table delete the gateway_customer_id
+15. Now the last card added will be default one so lets get provider_id  from the default card and check dashboard to see if it set as default.

@@ -33,9 +33,9 @@ class PaymentMethodController extends Controller
         $card = $this->gateway->withUser($request->user())
             // will create new customer/if exist then this method do nothing
             ->createCustomer()
-//        dd($card);
-                // we add card using stripe token we get from api
             ->addCard($request->token);
+        dd($card);
+                // we add card using stripe token we get from api
             // will return Card Model or payment method
     }
 }

@@ -11,7 +11,7 @@ class PaymentMethod extends Model
     use HasFactory, CanBeDefault;
 
     protected $fillable = [
-        'cart_type',
+        'card_type',
         'last_four',
         'provider_id',
         'default'
