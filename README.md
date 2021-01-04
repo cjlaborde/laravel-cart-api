@@ -1507,3 +1507,45 @@ b) BraintreeCustomer.php
 ```
 Each time you make changes truncate payment_methods and in users table delete the gateway_customer_id
 15. Now the last card added will be default one so lets get provider_id  from the default card and check dashboard to see if it set as default.
+
+### Responding with a card and writing some tests
+1. In StripeGatewayCustomer.php addCard() method return the data
+```php
+        return $this->gateway->user()->paymentMethods()->create([
+            'provider_id' => $card->id,
+            'card_type' => $card->brand,
+            'last_four' => $card->last4,
+            'default' => true
+        ]);
+```
+2.  Then send a Post Request with Postman to http://cart-api.test/api/payment-methods
+3. Now on PaymentMethodController.php store() method
+```php 
+        return new PaymentMethodResource($card);
+```
+4. and you will receive data to display on the site.
+```php
+{
+    "data": {
+        "id": 4,
+        "card_type": "Visa",
+        "last_four": "4242",
+        "default": true
+    }
+}
+```
+### Testing: Responding with a card and writing some tests (hitting API in Testing)
+1. `php artisan make:test PaymentMethods\\PaymentMethodStoreTest`
+2. Test failed `Failed to find a validation error in the response for key: 'token'`
+3. Since we needed to add Validation in PaymentMethodController.php
+```php 
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+           'token' => 'required'
+        ]);
+    }
+```
+4. Is better to deal with API rather than deal with Fake data through mocking.
+5. Only problem is if Stripe API is temporally down and you need internet connection to test it
+6. php artisan make:request PaymentMethods\\PaymentMethodRequest

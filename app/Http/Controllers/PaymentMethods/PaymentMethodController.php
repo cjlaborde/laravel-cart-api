@@ -4,6 +4,7 @@ namespace App\Http\Controllers\PaymentMethods;
 
 use App\Cart\Payments\Gateway;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PaymentMethods\PaymentMethodStoreRequest;
 use App\Http\Resources\PaymentMethodResource;
 use Illuminate\Http\Request;
 
@@ -25,7 +26,7 @@ class PaymentMethodController extends Controller
     }
 
     // Store a card
-    public function store(Request $request)
+    public function store(PaymentMethodStoreRequest $request)
     {
 //        dd($this->gateway);
         // inject gateway depencency in our app
@@ -34,7 +35,9 @@ class PaymentMethodController extends Controller
             // will create new customer/if exist then this method do nothing
             ->createCustomer()
             ->addCard($request->token);
-        dd($card);
+
+        return new PaymentMethodResource($card);
+//        dd($card);
                 // we add card using stripe token we get from api
             // will return Card Model or payment method
     }

@@ -40,7 +40,7 @@ class StripeGatewayCustomer implements GatewayCustomer
 
 //        dd($card->brand);
         // reference gateway and grab user from gateway
-        $this->gateway->user()->paymentMethods()->create([
+        return $this->gateway->user()->paymentMethods()->create([
             'provider_id' => $card->id,
             'card_type' => $card->brand,
             'last_four' => $card->last4,
