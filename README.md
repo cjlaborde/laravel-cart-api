@@ -1553,12 +1553,10 @@ Each time you make changes truncate payment_methods and in users table delete th
 ### Event handler for processing the payment
 
 
-
-
-
-
-
-
+### Processing a payment
+1. Go to POSTMAN and send a Get request to cart `http://cart-api.test/api/cart`
+2. send a POST request to add item to cart `http://cart-api.test/api/cart`
+3. Make an order with Postman by send POST request to ``
 
 
 

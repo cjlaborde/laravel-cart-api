@@ -7,6 +7,7 @@ use App\Cart\Payments\GatewayCustomer;
 use App\Models\PaymentMethod;
 use App\Models\User;
 use Stripe\Customer as StripeCustomer;
+use Stripe\Charge as StripeCharge;
 
 class StripeGatewayCustomer implements GatewayCustomer
 {
@@ -23,7 +24,13 @@ class StripeGatewayCustomer implements GatewayCustomer
 
     public function charge(PaymentMethod $card, $amount)
     {
-        //
+        StripeCharge::create([
+            'currency' => 'usd',
+            'amount' => $amount,
+            'customer' => $this->customer->id,
+            'source' => $card->provider_id
+
+        ]);
     }
     // add card using token we get from server
     public function addCard($token)

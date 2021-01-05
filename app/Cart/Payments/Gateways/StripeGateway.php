@@ -57,7 +57,7 @@ class StripeGateway implements Gateway
         // We want to wrap this up in our StripeGatewayCustomer.php
     }
 
-    protected function getCustomer()
+    public function getCustomer()
     {
         return new StripeGatewayCustomer(
             $this, StripeCustomer::retrieve($this->user->gateway_customer_id)

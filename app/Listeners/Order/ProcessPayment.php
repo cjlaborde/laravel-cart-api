@@ -30,11 +30,15 @@ class ProcessPayment implements ShouldQueue
      */
     public function handle(OrderCreated $event)
     {
+        $order = $event->order;
 //        dd('a');
         // with user x
-
+        $this->gateway->withUser($order->user)
         // get customer
-
-        // charge
+        ->getCustomer()
+        // charge the user using payment method that comes from Order model
+        ->charge(
+            $order->paymentMethod, $order->total()->amount()
+        );
     }
 }
