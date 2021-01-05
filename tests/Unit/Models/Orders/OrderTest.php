@@ -5,6 +5,7 @@ namespace Tests\Unit\Models\Orders;
 use App\Cart\Money;
 use App\Models\Address;
 use App\Models\Order;
+use App\Models\PaymentMethod;
 use App\Models\ProductVariation;
 use App\Models\ShippingMethod;
 use App\Models\User;
@@ -45,7 +46,16 @@ class OrderTest extends TestCase
             'user_id' => User::factory()->create()
         ]);
 
-        $this->assertInstanceOf(ShippingMethod::class, $order->ShippingMethod);
+        $this->assertInstanceOf(ShippingMethod::class, $order->shippingMethod);
+    }
+
+    public function test_it_belongs_to_a_payment_method()
+    {
+        $order = Order::factory()->create([
+            'user_id' => User::factory()->create()
+        ]);
+
+        $this->assertInstanceOf(PaymentMethod::class, $order->paymentMethod);
     }
 
     public function test_it_has_many_products()

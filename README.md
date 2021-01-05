@@ -1549,3 +1549,22 @@ Each time you make changes truncate payment_methods and in users table delete th
 4. Is better to deal with API rather than deal with Fake data through mocking.
 5. Only problem is if Stripe API is temporally down and you need internet connection to test it
 6. php artisan make:request PaymentMethods\\PaymentMethodRequest
+
+### Event handler for processing the payment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -3,22 +3,23 @@
 namespace App\Listeners\Order;
 
 use App\Cart\Cart;
+use App\Cart\Payments\Gateway;
 use App\Events\Order\OrderCreated;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class EmptyCart
+class ProcessPayment implements ShouldQueue
 {
-    protected $cart;
+    protected $gateway;
 
     /**
      * Create the event listener.
      *
-     * @param Cart $cart
+     * @return void
      */
-    public function __construct(Cart $cart)
+    public function __construct(Gateway $gateway)
     {
-        $this->cart = $cart;
+        $this->gateway = $gateway;
     }
 
     /**
@@ -29,6 +30,11 @@ class EmptyCart
      */
     public function handle(OrderCreated $event)
     {
-        $this->cart->empty();
+//        dd('a');
+        // with user x
+
+        // get customer
+
+        // charge
     }
 }

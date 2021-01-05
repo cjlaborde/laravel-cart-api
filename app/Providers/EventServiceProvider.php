@@ -8,6 +8,7 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use App\Events\Order\OrderCreated;
 use App\Listeners\Order\EmptyCart;
+use App\Listeners\Order\ProcessPayment;
 
 
 class EventServiceProvider extends ServiceProvider
@@ -19,6 +20,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         OrderCreated::class => [
+            ProcessPayment::class,
             EmptyCart::class
         ],
         Registered::class => [
