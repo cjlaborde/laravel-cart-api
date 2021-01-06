@@ -1556,13 +1556,22 @@ Each time you make changes truncate payment_methods and in users table delete th
 ### Processing a payment
 1. Go to POSTMAN and send a Get request to cart `http://cart-api.test/api/cart`
 2. send a POST request to add item to cart `http://cart-api.test/api/cart`
-3. Make an order with Postman by send POST request to ``
+3. Make an order with Postman by send POST request to `http://cart-api.test/api/orders`
+4. Then check on <https://dashboard.stripe.com/test/payments?status%5B%5D=successful>
 
-
-
-
-
-
-
-
-
+### Handling a failed payment
+1. php artisan
+2. php artisan make:exception PaymentFailedException
+3. php artisan make:event Orders\\OrderPaymentFailed
+4. Send a POST & GET request with Postman in `http://cart-api.test/api/cart` to add product to cart and see item added.
+5. If stock is 0 make sure to add stock in stocks table on the cart database.
+6. Send POST request to `http://cart-api.test/api/orders` with postman
+7. Now check database for orders table to see order status as payment_failed
+8. We checked the Exception worked by adding it in the charge method of StripeGatewayCustomer.php
+```php 
+    public function charge(PaymentMethod $card, $amount)
+    {
+        try {
+//            throw new PaymentFailedException();
+```
+9. 

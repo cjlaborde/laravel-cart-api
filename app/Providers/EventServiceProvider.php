@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\Orders\OrderPaymentFailed;
+use App\Listeners\Order\MarkOrderPaymentFailed;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -22,6 +24,10 @@ class EventServiceProvider extends ServiceProvider
         OrderCreated::class => [
             ProcessPayment::class,
             EmptyCart::class
+        ],
+        OrderPaymentFailed::class => [
+            MarkOrderPaymentFailed::class
+            // you could create another listener to send email as well when order fails
         ],
         Registered::class => [
             SendEmailVerificationNotification::class,

@@ -4,8 +4,10 @@ namespace App\Cart\Payments\Gateways;
 
 use App\Cart\Payments\Gateway;
 use App\Cart\Payments\GatewayCustomer;
+use App\Exceptions\PaymentFailedException;
 use App\Models\PaymentMethod;
 use App\Models\User;
+use Exception;
 use Stripe\Customer as StripeCustomer;
 use Stripe\Charge as StripeCharge;
 
@@ -24,13 +26,19 @@ class StripeGatewayCustomer implements GatewayCustomer
 
     public function charge(PaymentMethod $card, $amount)
     {
-        StripeCharge::create([
-            'currency' => 'usd',
-            'amount' => $amount,
-            'customer' => $this->customer->id,
-            'source' => $card->provider_id
+        try {
+//            throw new PaymentFailedException();
 
-        ]);
+            StripeCharge::create([
+                'currency' => 'usd',
+                'amount' => $amount,
+                'customer' => $this->customer->id,
+                'source' => $card->provider_id
+
+            ]);
+        } catch (Exception $e) {
+            throw new PaymentFailedException();
+        }
     }
     // add card using token we get from server
     public function addCard($token)
