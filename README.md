@@ -1603,3 +1603,14 @@ Each time you make changes truncate payment_methods and in users table delete th
 10.  Had an issue where app/Events/Order/OrderPaymentFailed.php  namespace was incorrect.
 11. Was able to find error using `dd($response->getContent());` in `test_it_empties_the_cart_when_ordering()` to debug
 12. Be aware we're not yet testing that payment is passing we will work on it next.
+
+### Testing listeners
+1. Since these going to be unit test we not going to hit the stripe api so we going to use mockery data
+2. php artisan make:test Listeners\\EmptyCartListenerTest --unit
+3. In EmptyCart.php you can check that the test from EmptyCartListenerTest.php test_it_should_clear_the_cart() is working by commenting  `$this->cart->empty();`
+```php 
+    public function handle()
+    {
+//        $this->cart->empty();
+    }
+```
