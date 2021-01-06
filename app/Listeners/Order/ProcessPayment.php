@@ -2,13 +2,12 @@
 
 namespace App\Listeners\Order;
 
-use App\Cart\Cart;
 use App\Cart\Payments\Gateway;
 use App\Events\Order\OrderCreated;
+use App\Events\Order\OrderPaid;
 use App\Events\Orders\OrderPaymentFailed;
 use App\Exceptions\PaymentFailedException;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class ProcessPayment implements ShouldQueue
 {
@@ -17,7 +16,7 @@ class ProcessPayment implements ShouldQueue
     /**
      * Create the event listener.
      *
-     * @return void
+     * @param Gateway $gateway
      */
     public function __construct(Gateway $gateway)
     {
@@ -44,6 +43,7 @@ class ProcessPayment implements ShouldQueue
                 $order->paymentMethod, $order->total()->amount()
             );
             // fire event if it was successful for example send (email or SMS)
+            event(new OrderPaid($order));
         } catch (PaymentFailedException $e) {
             // fire event if it failed
             event(new OrderPaymentFailed($order));

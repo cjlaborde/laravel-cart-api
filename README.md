@@ -1574,4 +1574,8 @@ Each time you make changes truncate payment_methods and in users table delete th
         try {
 //            throw new PaymentFailedException();
 ```
-9. 
+
+
+### Handling a successful payment
+1. Send a POST & GET request with Postman in `http://cart-api.test/api/cart` to add product to cart and see item added.
+2. Send POST request to `http://cart-api.test/api/orders` with postman
