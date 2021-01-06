@@ -257,6 +257,8 @@ class OrderStoreTest extends TestCase
             'payment_method_id' => $payment->id
         ]);
 
+//        dd($response->getContent());
+
 //        dd($user->cart);
         // check if cart is empty
         $this->assertEmpty($user->cart);
@@ -275,6 +277,18 @@ class OrderStoreTest extends TestCase
 
     protected function orderDependencies(User $user)
     {
+        $stripeCustomer = \Stripe\Customer::create([
+            'email' => $user->email,
+        ]);
+
+//        dd($stripeCustomer->id);
+
+        $user->update([
+            'gateway_customer_id' => $stripeCustomer->id
+        ]);
+
+//        dd($user);
+
         $address = Address::factory()->create([
             'user_id' => $user->id
         ]);

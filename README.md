@@ -1579,3 +1579,27 @@ Each time you make changes truncate payment_methods and in users table delete th
 ### Handling a successful payment
 1. Send a POST & GET request with Postman in `http://cart-api.test/api/cart` to add product to cart and see item added.
 2. Send POST request to `http://cart-api.test/api/orders` with postman
+
+### Fixing failing 'cart empty' test
+1. Use `dd($response->getContent());` in `test_it_empties_the_cart_when_ordering()` to debug
+2. Then run `test_it_empties_the_cart_when_ordering()` to see what is the actual problem
+3. `"message": "Could not determine which URL to request: Stripe\\Customer instance has invalid ID:`
+4. The issue is happening in ProcessPayment.php in handle method since
+5. We are sending in the withUser() to grab the getCustomer() instance
+6. We can't grab the customer since we don't have the id associated with that customer on the test `test_it_empties_the_cart_when_ordering()`
+7. What we going to do is update the orderDependencies() method in OrderStoreTest.php
+9. So we going to update user with real account Stripe id
+```php
+    protected function orderDependencies(User $user)
+    {
+        $stripeCustomer =  \Stripe\Customer::create([
+            'email' => $user->email,
+        ]);
+
+        $user->update([
+            'gateway_customer_id' => $stripeCustomer->id
+        ]);
+```
+10.  Had an issue where app/Events/Order/OrderPaymentFailed.php  namespace was incorrect.
+11. Was able to find error using `dd($response->getContent());` in `test_it_empties_the_cart_when_ordering()` to debug
+12. Be aware we're not yet testing that payment is passing we will work on it next.

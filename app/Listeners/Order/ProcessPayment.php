@@ -5,7 +5,7 @@ namespace App\Listeners\Order;
 use App\Cart\Payments\Gateway;
 use App\Events\Order\OrderCreated;
 use App\Events\Order\OrderPaid;
-use App\Events\Orders\OrderPaymentFailed;
+use App\Events\Order\OrderPaymentFailed;
 use App\Exceptions\PaymentFailedException;
 use Illuminate\Contracts\Queue\ShouldQueue;
 

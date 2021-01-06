@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events\Orders;
+namespace App\Events\Order;
 
 use App\Models\Order;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -18,7 +18,7 @@ class OrderPaymentFailed
     /**
      * Create a new event instance.
      *
-     * @return void
+     * @param Order $order
      */
     public function __construct(Order $order)
     {
