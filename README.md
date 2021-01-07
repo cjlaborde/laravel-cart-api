@@ -1614,3 +1614,34 @@ Each time you make changes truncate payment_methods and in users table delete th
 //        $this->cart->empty();
     }
 ```
+
+### Using Mockery to test more complex listeners
+1. What we plan to test in ProcessPayment.php
+```php 
+    public function handle(OrderCreated $event)
+    {
+        $order = $event->order;
+        try {
+            $this->gateway->withUser($order->user)
+            ->getCustomer()
+            ->charge(
+            // 1# Test that order successfully charge and pass through correct paymentMethod
+            // 2# correct total for the order
+                $order->paymentMethod, $order->total()->amount()
+            );
+            // 3# Test it fires the OrderPaid event
+            event(new OrderPaid($order));
+        } catch (PaymentFailedException $e) {
+            // 4# Test if event happens if order fails
+            event(new OrderPaymentFailed($order));
+        }
+    }
+```
+2. We going to test all of these without hitting Stripe
+3. We not Mocking Stripe but Mock Payment Gateway
+4. `php artisan make:test Listeners\\ProcessPaymentListenerTest --unit`
+
+
+
+
+
