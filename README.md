@@ -1641,7 +1641,20 @@ Each time you make changes truncate payment_methods and in users table delete th
 3. We not Mocking Stripe but Mock Payment Gateway
 4. `php artisan make:test Listeners\\ProcessPaymentListenerTest --unit`
 
+### Order transactions setup
+1. php artisan make:model Transaction -m
+2. Has many so you can setup up in future so that user can may more or pay half
+3. HasMany makes things easier to work with.
+```php
+public function transactions()
+{
+    return $this->hasMany(Transaction::class);
+}
+```
 
-
-
+### Testing: Order transactions setup
+1. php artisan make:factory TransactionFactory
+2. There was an error with test `public function test_it_has_many_transactions()`
+3. `Undefined column: 7 ERROR:  column "amount" of relation "transactions" does not exist`
+4. Problem was that in our TransactionFactory we wrote amount instead of total
 

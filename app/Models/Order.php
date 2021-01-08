@@ -71,4 +71,11 @@ class Order extends Model
             ->withPivot(['quantity'])
             ->withTimestamps();
     }
+
+    public function transactions()
+    {
+        // Has menu so you can setup up in future so that user can may more or pay half
+        // HasMany makes things easier to work with.
+        return $this->hasMany(Transaction::class);
+    }
 }
