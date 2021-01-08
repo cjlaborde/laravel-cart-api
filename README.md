@@ -1658,3 +1658,55 @@ public function transactions()
 3. `Undefined column: 7 ERROR:  column "amount" of relation "transactions" does not exist`
 4. Problem was that in our TransactionFactory we wrote amount instead of total
 
+### Storing transactions
+1. Now that we have transaction in place.
+2. Once we had OrderPaid and fire the event. We can go ahead and create that transaction.
+3. In `app/Providers/EventServiceProvider.php`
+4. add   CreateTransaction::class so that it runs when OrderPaid::class runs.
+```php 
+    protected $listen = [
+        OrderPaid::class => [
+            CreateTransaction::class,
+            MarkOrderProcessing::class
+        ],
+    ];
+```
+5. Then add `use App\Listeners\Order\CreateTransaction;`
+6. Run `php artisan event:generate`
+7. It should generate `app/Listeners/Order/CreateTransaction.php`
+8. Then we can get the information from the event
+```php 
+    public function handle(OrderPaid $event)
+    {
+        $event->order->transactions()->create([
+            'total' => $event->order->total()->amount() // 1000
+        ]);
+    }
+```
+9. Now to test if this works properly we can use Postman
+#### Making Order to see if transactions are working 
+1. Login to get Token by sending GET request to `http://cart-api.test/api/auth/login` using POSTMAN and copy the token
+2. Now in POSTMAN send GET request to see what items in your cart `http://cart-api.test/api/cart` and if empty then
+3. Send POSTMAN send POST request to add item to cart `http://cart-api.test/api/cart`
+4. In POSTMAN send GET request to see what items in your cart `http://cart-api.test/api/cart`
+5. Now make an Order by sending with POSTMAN a POST request to `http://cart-api.test/api/orders`
+6. Now Check cart transactions table has an order inside
+
+#### Testing: Storing transactions
+1. Copy MarkOrderPaymentListenerTest.php to save time and create CreateTransactionListenerTest.php
+2. You can add more information that you need to show in a transaction after processing payments.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
